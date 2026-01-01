@@ -1,0 +1,37 @@
+{
+  "name": "elyerr/vpn",
+  "version": "1.0.0",
+  "type": "project",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Vpn\\App\\": "app/",
+      "Vpn\\Database\\Factories\\": "database/factories/",
+      "Vpn\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Vpn\\App\\Providers\\ServiceProvider"
+      ]
+    }
+  },
+  "require": {
+    "elyerr/laravel-runtime": "^1.0",
+    "inertiajs/inertia-laravel": "^2.0",
+    "elyerr/api-response": "^1.0",
+    "laravel/framework": "^12.44"
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "php artisan assets:publish"
+    ]
+  },
+  "minimum-stability": "stable",
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
+  }
+}
