@@ -42,6 +42,7 @@ class Server extends Master
         'port',
         'socks_port',
         'proxy_port',
+        'internal',
         'user_id',
     ];
 
