@@ -61,9 +61,9 @@ class ServerTransformer extends TransformerAbstract
             'url' => $server->url,
             'internal' => $server->internal,
             'user' => [
-                'id' => $server->user()->id,
-                'name' => $server->user()->name,
-                'last_name' => $server->user()->last_name,
+                'id' => $server->user?->id,
+                'name' => $server->user?->name,
+                'last_name' => $server->user?->last_name,
             ],
             'socks_port' => $server->socks_port ?? 1090,
             'proxy_port' => $server->proxy_port ?? 1080,
