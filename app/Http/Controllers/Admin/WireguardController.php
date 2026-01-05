@@ -2,8 +2,6 @@
 namespace Vpn\App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\Wireguard\StoreRequest;
-use App\Http\Requests\Wireguard\UpdateRequest;
 use Vpn\App\Services\WireguardService;
 use Vpn\App\Transformers\Admin\WireguardTransformer;
 
@@ -45,7 +43,11 @@ class WireguardController extends \App\Http\Controllers\ApiController
         $this->middleware('scope:administrator:vpn:full,administrator:vpn:destroy')->only('destroy');
     }
 
-
+    /**
+     * Index
+     * @param Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function index(Request $request)
     {
         $query = $this->service->search($request);
@@ -53,7 +55,11 @@ class WireguardController extends \App\Http\Controllers\ApiController
         return $this->showAllByBuilder($query, WireguardTransformer::class);
     }
 
-
+    /**
+     * Store
+     * @param Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function store(Request $request)
     {
         $this->validate($request, [
