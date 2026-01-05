@@ -2,6 +2,8 @@
 
 namespace Vpn\App\Models;
 
+use Illuminate\Support\Str;
+
 /*
  * VPN - Server-side software for centralized administration and node management of a VPN service.
  * Copyright (C) 2025 Elvis Yerel Roman Concha
@@ -31,7 +33,7 @@ class Wireguard extends Master
     public $table = "vpn_wireguards";
 
     protected $fillable = [
-        'name',
+        'slug',
         'subnet',
         'gateway',
         'private_key',
@@ -43,6 +45,16 @@ class Wireguard extends Master
         'public',
         'server_id'
     ];
+
+    /**
+     * Set slug attribute
+     * @param mixed $value
+     * @return void
+     */
+    public function setSlugAttribute($value)
+    {
+        $this->attributes['slug'] = Str::slug($value, '-');
+    }
 
     /**
      * Server

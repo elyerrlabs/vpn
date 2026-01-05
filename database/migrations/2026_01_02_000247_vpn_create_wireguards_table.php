@@ -30,12 +30,12 @@ return new class extends Migration {
     {
         Schema::create('vpn_wireguards', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name', 150)->unique();
+            $table->string('slug', 150)->index();
             $table->string('subnet');
             $table->string('gateway');
             $table->string('private_key');
             $table->string('listen_port');
-            $table->string('dns');
+            $table->string('dns')->nullable();
             $table->boolean('dns_enabled')->default(false);
             $table->string('network_interface');
             $table->boolean('mounted')->default(false);
