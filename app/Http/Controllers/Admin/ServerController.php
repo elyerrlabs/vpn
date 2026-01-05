@@ -78,7 +78,7 @@ class ServerController extends \App\Http\Controllers\ApiController
 
         $data = $this->service->create($request->toArray());
 
-        return $this->showOne($data, ServerTransformer::class);
+        return $this->showOne($data, ServerTransformer::class, 201);
     }
 
     /**
