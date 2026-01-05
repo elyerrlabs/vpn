@@ -32,13 +32,13 @@ return new class extends Migration {
         Schema::create('vpn_servers', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name', 150)->index();
-            $table->ipAddress('ip')->index();
-            $table->string('url')->index();
+            $table->ipAddress('ip')->index()->unique();
+            $table->string('url')->index()->nullable();
             $table->string('port');
             $table->string('socks_port')->nullable();
             $table->string('proxy_port')->nullable();
             $table->boolean('internal')->default(true);
-            $table->uuid('user_id')->index();
+            $table->uuid('user_id')->index()->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();
