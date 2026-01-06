@@ -9,7 +9,10 @@
       "Vpn\\Database\\Factories\\": "database/factories/",
       "Vpn\\Database\\Seeders\\": "database/seeders/",
       "Vpn\\Tests\\": "tests/"
-    }
+    },
+    "files": [
+      "app/Helpers/helper.php"
+    ]
   },
   "extra": {
     "laravel": {
