@@ -50,8 +50,8 @@ final class WireguardService implements Service
     {
         $query = $this->repository->query();
 
-        if ($request->filled('name')) {
-            $query->whereRaw('lower(name) like ?', ['%' . strtolower('name') . '%']);
+        if ($request->filled('slug')) {
+            $query->whereRaw('lower(slug) like ?', ['%' . strtolower('slug') . '%']);
         }
 
         if ($request->filled('server_id')) {
