@@ -11,8 +11,8 @@ Route::group([
     'as' => 'admin.'
 ], function () {
 
-    Route::resource('servers', \Vpn\App\Http\Controllers\Admin\ServerController::class);
-    Route::resource('wireguard', \Vpn\App\Http\Controllers\Admin\WireguardController::class);
+    Route::resource('servers', \Vpn\App\Http\Controllers\Api\Admin\ServerController::class);
+    Route::resource('wireguard', \Vpn\App\Http\Controllers\Api\Admin\WireguardController::class);
 });
 
 
@@ -21,7 +21,7 @@ Route::group([
     'as' => 'users.'
 ], function () {
 
-    Route::resource('servers', \Vpn\App\Http\Controllers\User\ServerController::class)->only('index');
-    Route::resource('wireguard', \Vpn\App\Http\Controllers\User\WireguardController::class)->only('index');
-    Route::resource('peers', \Vpn\App\Http\Controllers\User\PeerController::class)->only('index', 'store', 'update', 'destroy');
+    Route::resource('servers', \Vpn\App\Http\Controllers\Api\User\ServerController::class)->only('index');
+    Route::resource('wireguard', \Vpn\App\Http\Controllers\Api\User\WireguardController::class)->only('index');
+    Route::resource('peers', \Vpn\App\Http\Controllers\Api\User\PeerController::class)->only('index', 'store', 'update', 'destroy');
 });

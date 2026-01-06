@@ -1,5 +1,5 @@
 <?php
-namespace Vpn\App\Http\Controllers\Admin;
+namespace Vpn\App\Http\Controllers\Api\Admin;
 
 use Illuminate\Http\Request;
 use Vpn\App\Services\WireguardService;

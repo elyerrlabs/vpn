@@ -1,5 +1,5 @@
 <?php
-namespace Vpn\App\Http\Controllers\User;
+namespace Vpn\App\Http\Controllers\Api\User;
 
 use Illuminate\Http\Request;
 use Vpn\App\Services\PeerService;
