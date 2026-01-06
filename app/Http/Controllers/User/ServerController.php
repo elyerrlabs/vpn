@@ -1,6 +1,10 @@
 <?php
+namespace Vpn\App\Http\Controllers\User;
 
-namespace Vpn\App\Models;
+use Illuminate\Http\Request;
+use Vpn\App\Services\ServerService;
+use App\Http\Controllers\ApiController;
+use Vpn\App\Transformers\User\ServerTransformer;
 
 /*
  * VPN - Server-side software for centralized administration and node management of a VPN service.
@@ -20,42 +24,32 @@ namespace Vpn\App\Models;
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-class Peer extends Master
+class ServerController extends ApiController
 {
-    /**
-     * Table name
-     * @var string
-     */
-    public $table = "vpn_peers";
-
-
-    protected $fillable = [
-        'name',
-        'public_key',
-        'preshared_key',
-        'allowed_ips',
-        'persistent_keepalive',
-        'mtu',
-        'mounted',
-        'user_id',
-        'wireguard_id',
-    ];
 
     /**
-     * Wireguard
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Wireguard, Peer>
+     * Repository
+     * @var ServerService
      */
-    public function wireguard()
+    public $service;
+
+    /**
+     * Construct
+     * @param ServerService $serverService
+     */
+    public function __construct(ServerService $serverService)
     {
-        return $this->belongsTo(Wireguard::class);
+        $this->service = $serverService;
     }
 
     /**
-     * Belongs to the user
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, Peer>
+     * Search server for current user
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function user()
+    public function index(Request $request)
     {
-        return $this->belongsTo(User::class);
+        $data = $this->service->search($request);
+
+        return $this->showAllByBuilder($data, ServerTransformer::class);
     }
 }

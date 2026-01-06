@@ -1,6 +1,9 @@
 <?php
 
-namespace Vpn\App\Models;
+namespace Vpn\App\Transformers\User;
+
+use League\Fractal\TransformerAbstract;
+use Vpn\App\Models\Wireguard;
 
 /*
  * VPN - Server-side software for centralized administration and node management of a VPN service.
@@ -20,42 +23,38 @@ namespace Vpn\App\Models;
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-class Peer extends Master
+class WireguardTransformer extends TransformerAbstract
 {
     /**
-     * Table name
-     * @var string
+     * List of resources to automatically include
+     *
+     * @var array
      */
-    public $table = "vpn_peers";
-
-
-    protected $fillable = [
-        'name',
-        'public_key',
-        'preshared_key',
-        'allowed_ips',
-        'persistent_keepalive',
-        'mtu',
-        'mounted',
-        'user_id',
-        'wireguard_id',
+    protected array $defaultIncludes = [
+        //
     ];
 
     /**
-     * Wireguard
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Wireguard, Peer>
+     * List of resources possible to include
+     *
+     * @var array
      */
-    public function wireguard()
-    {
-        return $this->belongsTo(Wireguard::class);
-    }
+    protected array $availableIncludes = [
+        //
+    ];
 
     /**
-     * Belongs to the user
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, Peer>
+     * A Fractal transformer.
+     *
+     * @return array
      */
-    public function user()
+    public function transform(Wireguard $wireguard)
     {
-        return $this->belongsTo(User::class);
+        return [
+            'id' => $wireguard->id,
+            'slug' => $wireguard->slug,
+            'server_country' => $wireguard->server->name,
+            'data' => location($wireguard->server->ip)
+        ];
     }
 }

@@ -1,6 +1,9 @@
 <?php
 
-namespace Vpn\App\Models;
+namespace Vpn\App\Repositories;
+
+use Vpn\App\Contracts\Repository;
+use Vpn\App\Models\Peer;
 
 /*
  * VPN - Server-side software for centralized administration and node management of a VPN service.
@@ -20,42 +23,51 @@ namespace Vpn\App\Models;
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-class Peer extends Master
+final class PeerRepository implements Repository
 {
-    /**
-     * Table name
-     * @var string
-     */
-    public $table = "vpn_peers";
-
-
-    protected $fillable = [
-        'name',
-        'public_key',
-        'preshared_key',
-        'allowed_ips',
-        'persistent_keepalive',
-        'mtu',
-        'mounted',
-        'user_id',
-        'wireguard_id',
-    ];
 
     /**
-     * Wireguard
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Wireguard, Peer>
+     * Model
+     * @var Peer
      */
-    public function wireguard()
+    protected $model;
+
+    public function __construct()
     {
-        return $this->belongsTo(Wireguard::class);
+        $this->model = app(Peer::class);
     }
 
     /**
-     * Belongs to the user
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, Peer>
+     * Query
+     * @return \Illuminate\Database\Eloquent\Builder<Peer>
      */
-    public function user()
+    public function query()
     {
-        return $this->belongsTo(User::class);
+        $query = $this->model->newQuery();
+
+        $query->with(['wireguard', 'wireguard.server', 'user']);
+
+        return $query;
+    }
+
+    /**
+     * Add new resource
+     * @param array $data
+     * @return Peer
+     */
+    public function create(array $data)
+    {
+        return $this->model->create($data);
+    }
+
+    /**
+     * Find resource
+     * @param string $id
+     * @param array $data
+     * @return Peer
+     */
+    public function find(string $id)
+    {
+        return $this->model->findOrFail($id);
     }
 }
