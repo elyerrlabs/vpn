@@ -6,8 +6,6 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Vpn\App\Models\Wireguard;
 use Vpn\App\Contracts\Service;
-use Vpn\App\Traits\IpGenerator;
-use Vpn\App\Traits\WireguardGenerator;
 use Vpn\App\Repositories\WireguardRepository;
 use Elyerr\ApiResponse\Exceptions\ReportError;
 
@@ -29,10 +27,8 @@ use Elyerr\ApiResponse\Exceptions\ReportError;
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-final class WireguardService implements Service
+final class WireguardService extends MasterService implements Service
 {
-
-    use IpGenerator, WireguardGenerator;
 
     /**
      * Wireguard repository
@@ -86,7 +82,7 @@ final class WireguardService implements Service
     public function searchForUser(Request $request)
     {
         $request->merge([
-            'user_id' => auth()->user()->id
+            'user_id' => $request->user()->id
         ]);
 
         return $this->search($request);
@@ -238,7 +234,7 @@ final class WireguardService implements Service
     public function deleteForUser(string $id)
     {
         $model = $this->repository->query()
-            ->where('user_id', auth()->user()->id)
+            ->where('user_id', request()->user()->id)
             ->where('id', $id)
             ->first();
 
