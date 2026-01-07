@@ -40,16 +40,13 @@ return [
         */
         'admin_dashboard' => [
 
-            /*
-            'vpn-admin' => [
-                'id'      => 'vpn-admin',
-                'name'    => 'ElyMod Admin',
-                'route'   => 'module.vpn.web.welcome',
-                'icon'    => 'mdi-security',
-                'service' => 'administrator:admin',
+            'vpn_servers' => [
+                'id' => 'servers',
+                'name' => 'VNP Servers',
+                'route' => 'module.vpn.admin.servers',
+                'icon' => 'mdi-store-cog',
+                'service' => 'administrator:vpn',
             ],
-            */
-
         ],
 
         /*
@@ -87,15 +84,21 @@ return [
         |
         */
         'admin_routes' => [
-            /*
-            'vpn-admin-app' => [
-                'id'      => 'vpn-app',
-                'name'    => 'ElyMod',
-                'route'   => 'module.vpn.web.welcome',
-                'icon'    => 'mdi-application',
-                'service' => 'user:access',
+            'vpn_servers' => [
+                'id' => 'servers',
+                'name' => 'VNP Servers',
+                'route' => 'module.vpn.admin.servers',
+                'icon' => 'mdi-store-cog',
+                'service' => 'administrator:vpn',
             ],
-            */
+
+            'vpn_wireguard_servers' => [
+                'id' => 'servers',
+                'name' => 'VNP Wireguard Servers',
+                'route' => 'module.vpn.admin.wireguard',
+                'icon' => 'mdi-store-cog',
+                'service' => 'administrator:vpn',
+            ],
         ],
 
         /*
@@ -146,5 +149,34 @@ return [
         ],
         */
     ],
+
+    'vpn_routes' => [
+        [
+            'id' => 'dashboard',
+            'name' => 'Dashboard',
+            'route' => 'module.vpn.admin.admin',
+            'icon' => 'mdi-store-cog',
+            'service' => 'administrator:vpn',
+            'position' => 1,
+        ],
+
+        [
+            'id' => 'servers',
+            'name' => 'Servers',
+            'route' => 'module.vpn.admin.servers',
+            'icon' => 'mdi-store-cog',
+            'service' => 'administrator:vpn',
+            'position' => 1,
+        ],
+
+        [
+            'id' => 'wireguard',
+            'name' => 'Wireguard',
+            'route' => 'module.vpn.admin.wireguard',
+            'icon' => 'mdi-store-cog',
+            'service' => 'administrator:vpn',
+            'position' => 1,
+        ],
+    ]
 
 ];
