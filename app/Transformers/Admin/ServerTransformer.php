@@ -55,7 +55,7 @@ class ServerTransformer extends TransformerAbstract
     {
         return [
             'id' => $server->id,
-            'country' => $server->country,
+            'name' => $server->name,
             'ip' => $server->ip,
             'port' => $server->port,
             'url' => $server->url,

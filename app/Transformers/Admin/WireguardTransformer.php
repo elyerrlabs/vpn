@@ -64,7 +64,12 @@ class WireguardTransformer extends TransformerAbstract
             'network_interface' => $wireguard->network_interface,
             'mounted' => $wireguard->mounted ? true : false,
             'public' => $wireguard->public ? true : false,
-            'server_id' => $wireguard->server_id,
+            'server' => [
+                'id' => $wireguard->server->id,
+                'name' => $wireguard->server->name,
+                'url' => $wireguard->server->url,
+                'ip' => $wireguard->server->ip,
+            ],
             'links' => [
                 'index' => route('module.vpn.api.admin.wireguard.index'),
                 'store' => route('module.vpn.api.admin.wireguard.store'),
