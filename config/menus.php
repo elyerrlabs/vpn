@@ -59,15 +59,13 @@ return [
         */
         'user_routes' => [
 
-            /*
-            'vpn-app' => [
-                'id'      => 'vpn-app',
-                'name'    => 'ElyMod',
-                'route'   => 'module.vpn.web.welcome',
-                'icon'    => 'mdi-application',
-                'service' => 'user:access',
+            'vpn_wireguard' => [
+                'id' => 'peers',
+                'name' => 'VPN Wireguard',
+                'route' => 'module.vpn.web.users.peers',
+                'icon' => 'mdi-store-cog',
+                'service' => true,
             ],
-            */
 
         ],
 
@@ -176,6 +174,16 @@ return [
             'icon' => 'mdi-store-cog',
             'service' => 'administrator:vpn',
             'position' => 1,
+        ],
+    ],
+
+    'vpn_user_routes' => [
+        [
+            'id' => 'peers',
+            'name' => 'Wireguard Generator',
+            'route' => 'module.vpn.web.users.peers',
+            'icon' => 'mdi-store-cog',
+            'service' => 'administrator:vpn',
         ],
     ]
 

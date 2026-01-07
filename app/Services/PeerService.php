@@ -166,10 +166,10 @@ final class PeerService extends MasterService implements Service
         $config[] = "";
         $config[] = "[Peer]";
         $config[] = "PublicKey = {$this->generatePubKey($wireguard_server->private_key)}";
-        $config[] = "Endpoint = {$wireguard_server->server->ip}:{$model->listen_port}";
+        $config[] = "Endpoint = {$wireguard_server->server->ip}:{$wireguard_server->listen_port}";
         $config[] = "AllowedIPs = 0.0.0.0/0, ::/0";
         $config[] = "PresharedKey = {$preshared_key}";
-        $config[] = "MTU = {$model->mtu}";
+        //$config[] = "MTU = {$model->mtu}";
         $config[] = "PersistentKeepalive = {$model->persistent_keepalive}";
 
         // Add configuration to the model
