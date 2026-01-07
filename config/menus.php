@@ -150,7 +150,7 @@ return [
         */
     ],
 
-    'vpn_routes' => [
+    'vpn_admin_routes' => [
         [
             'id' => 'dashboard',
             'name' => 'Dashboard',

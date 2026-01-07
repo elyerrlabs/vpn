@@ -28,7 +28,7 @@ final class AdminController extends WebController
     public function servers()
     {
         return Inertia::render('Admin/Server/Index', [
-            'menus' => resolveInertiaRoutes(config('menus.vpn_routes')),
+            'menus' => resolveInertiaRoutes(config('menus.vpn_admin_routes')),
             'servers' => [
                 'index' => route('module.vpn.api.admin.servers.index'),
                 'store' => route('module.vpn.api.admin.servers.store')
@@ -39,7 +39,7 @@ final class AdminController extends WebController
     public function wireguard()
     {
         return Inertia::render('Admin/Wireguard/Index', [
-            'menus' => resolveInertiaRoutes(config('menus.vpn_routes')),
+            'menus' => resolveInertiaRoutes(config('menus.vpn_admin_routes')),
             'wireguard' => [
                 'index' => route('module.vpn.api.admin.wireguard.index'),
                 'store' => route('module.vpn.api.admin.wireguard.store'),
