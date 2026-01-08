@@ -76,7 +76,15 @@ class ServerController extends \App\Http\Controllers\ApiController
             'proxy_port' => ['nullable', 'max:6'],
         ]);
 
-        $data = $this->service->create($request->toArray());
+        $data = $this->service->create([
+            'name' => $request->name,
+            'ip' => $request->ip,
+            'url' => $request->url ?? null,
+            'port' => $request->port,
+            'proxy_port' => $request->proxy_port ?? 1080,
+            'socks_port' => $request->socks_port ?? 1090,
+            'hidden' => $request->hidden ?? false,
+        ]);
 
         return $this->showOne($data, ServerTransformer::class, 201);
     }
