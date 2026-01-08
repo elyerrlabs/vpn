@@ -38,6 +38,7 @@ return new class extends Migration {
             $table->string('socks_port')->nullable();
             $table->string('proxy_port')->nullable();
             $table->boolean('internal')->default(true);
+            $table->boolean('hidden')->default(false);
             $table->uuid('user_id')->index()->nullable();
             $table->timestamps();
 
