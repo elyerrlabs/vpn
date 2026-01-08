@@ -120,6 +120,20 @@ return [
             */
 
         ],
+
+
+        'admin_settings' => [
+
+            'vpn-settings' => [
+                'id' => 'vpn-settings',
+                'name' => 'VPN Settings',
+                'route' => 'module.vpn.admin.settings.general',
+                'icon' => 'mdi-cog',
+                'service' => 'administrator:settings',
+            ],
+
+
+        ],
     ],
 
     /*

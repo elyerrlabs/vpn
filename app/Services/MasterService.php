@@ -38,10 +38,10 @@ class MasterService
     public function __construct()
     {
         $this->plans = [
-            'commerce:vpn:advanced' => config('third-party.vpn.advanced', 20),
-            'commerce:vpn:intermediate' => config('third-party.vpn.intermediate', 10),
-            'commerce:vpn:basic' => config('third-party.vpn.basic', 5),
-            'commerce:vpn:free' => config('third-party.vpn.free', 2),
+            'commerce:vpn:advanced' => config_module('advanced.peers', 20),
+            'commerce:vpn:intermediate' => config_module('intermediate.peers', 10),
+            'commerce:vpn:basic' => config_module('basic.peers', 5),
+            'commerce:vpn:free' => config_module('free.peers', 2),
         ];
     }
 
