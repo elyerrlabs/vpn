@@ -39,17 +39,107 @@ class ServerController extends ApiController
      */
     public function __construct(ServerService $serverService)
     {
+        parent::__construct();
         $this->service = $serverService;
     }
 
     /**
-     * Search server for current user
+     * Show the all servers available
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function listServers(Request $request)
+    {
+        $request->merge([
+            'hidden' => false
+        ]);
+
+        $data = $this->service->search($request);
+
+        return $this->showAllByBuilder($data, ServerTransformer::class);
+    }
+
+    /**
+     * List server belongs to the user
+     * @param Request $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
-        $data = $this->service->search($request);
+        $data = $this->service->searchForUser($request);
 
         return $this->showAllByBuilder($data, ServerTransformer::class);
+    }
+
+
+    /**
+     * Create new resource
+     * @param Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'name' => ['required', 'max:150', 'min:3'],
+            'ip' => ['required', 'ipv4', 'unique:vpn_servers,ip'],
+            'url' => ['nullable', 'max:100'],
+            'port' => ['required', 'max:6'],
+            'socks_port' => ['nullable', 'max:6'],
+            'proxy_port' => ['nullable', 'max:6'],
+        ]);
+
+        $data = $this->service->create([
+            'name' => $request->name,
+            'ip' => $request->ip,
+            'url' => $request->url ?? null,
+            'port' => $request->port,
+            'proxy_port' => $request->proxy_port ?? 1080,
+            'socks_port' => $request->socks_port ?? 1090,
+            'user_id' => request()->user()->id,
+            'internal' => false,
+            'hidden' => $request->hidden ?? false,
+        ]);
+
+        return $this->showOne($data, ServerTransformer::class, 201);
+    }
+
+    /**
+     * Show resource details
+     * @param string $id
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function show(string $id)
+    {
+        $data = $this->service->details($id);
+
+        return $this->showOne($data, ServerTransformer::class);
+    }
+
+    /**
+     * Update resource
+     * @param Request $request
+     * @param string $id
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, string $id)
+    {
+        $this->validate($request, [
+            'ip' => ['required', 'ipv4', 'unique:vpn_servers,ip,' . $id]
+        ]);
+
+        $data = $this->service->update($id, $request->toArray());
+
+        return $this->showOne($data, ServerTransformer::class);
+    }
+
+    /**
+     * Destroy resource
+     * @param string $id
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function destroy(string $id)
+    {
+        $data = $this->service->delete($id);
+
+        return $this->showOne($data);
     }
 }
