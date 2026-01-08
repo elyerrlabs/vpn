@@ -127,6 +127,6 @@ class ServerController extends \App\Http\Controllers\ApiController
     {
         $data = $this->service->delete($id);
 
-        return $this->showOne($data);
+        return $this->showOne($data, ServerTransformer::class);
     }
 }
