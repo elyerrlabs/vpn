@@ -1,6 +1,9 @@
 <template>
   <div>
-    <button @click="toggle" class="px-4 py-2 cursor-pointer bg-blue-500 text-white">
+    <button
+      @click="toggle"
+      class="px-4 py-2 cursor-pointer bg-blue-500 text-white"
+    >
       {{ buttonName }}
     </button>
     <v-modal v-model="dialog" :title="__(title)" panel-class="w-full lg:w-4xl">
@@ -44,7 +47,11 @@
             :error="errors.socks_port"
           />
 
-          <v-switch :label="__('Internal server')" v-model="form.internal" />
+          <v-switch
+            :label="__('Make hidden')"
+            v-model="form.hidden"
+            :error="errors.hidden"
+          />
         </div>
         <div class="flex justify-between items-center">
           <button
@@ -103,7 +110,6 @@ const toggle = () => {
   form.value.port = "";
   form.value.proxy_port = "";
   form.value.socks_port = "";
-  form.value.internal = true;
   dialog.value = !dialog.value;
   errors.value = {};
 
@@ -141,9 +147,10 @@ const addServer = async () => {
 const updateServer = async () => {
   try {
     const res = await $server.put(props.item.links.update, form.value);
-    if (res.status == 201) {
+    if (res.status == 200) {
       toggle();
-      emits("created");
+      emits("updated");
+      $notify.success(__("Server updated"));
     }
   } catch (error) {
     if (error?.response?.data?.message) {

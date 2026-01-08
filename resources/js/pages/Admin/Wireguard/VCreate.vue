@@ -33,17 +33,33 @@
             value-key="id"
             :searchable="true"
             @search="searchServer"
-          />
+          >
+            <template #selected="{ option }">
+              <span>
+                {{
+                  option ? option.name + " - " + option.ip : __("Select server")
+                }}
+              </span>
+            </template>
+            <template #option="{ option }">
+              <span
+                class="px-4 py-2 block uppercase font-semibold hover:bg-blue-500"
+              >
+                {{ option.name }} - {{ option.ip }}
+              </span>
+            </template>
+          </v-select>
 
           <v-select
-            :label="__('Server list')"
+            :label="__('Interface list')"
             v-model="form.network_interface"
             :options="interfaces"
             required
             :error="errors.network_interface"
             label-key="name"
             value-key="id"
-          />
+          >
+          </v-select>
 
           <v-input
             :label="__('DNS Server')"

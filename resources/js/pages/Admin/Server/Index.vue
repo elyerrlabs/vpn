@@ -49,7 +49,7 @@
           <div class="space-y-2.5 text-sm">
             <div class="flex items-center gap-2">
               <span class="w-20 text-gray-500 dark:text-gray-400 font-medium"
-                >IP:</span
+                >{{ __("IP") }}:</span
               >
               <span class="text-gray-900 dark:text-gray-100 font-mono">{{
                 server.ip
@@ -57,7 +57,7 @@
             </div>
             <div class="flex items-center gap-2">
               <span class="w-20 text-gray-500 dark:text-gray-400 font-medium"
-                >Port:</span
+                >{{ __("Port") }}:</span
               >
               <span class="text-gray-900 dark:text-gray-100 font-mono">{{
                 server.port
@@ -65,7 +65,7 @@
             </div>
             <div class="flex items-center gap-2">
               <span class="w-20 text-gray-500 dark:text-gray-400 font-medium"
-                >SOCKS:</span
+                >{{ __("SOCKS") }}:</span
               >
               <span class="text-gray-900 dark:text-gray-100 font-mono">{{
                 server.socks_port
@@ -73,10 +73,19 @@
             </div>
             <div class="flex items-center gap-2">
               <span class="w-20 text-gray-500 dark:text-gray-400 font-medium"
-                >Proxy:</span
+                >{{ __("Proxy") }}:</span
               >
               <span class="text-gray-900 dark:text-gray-100 font-mono">{{
                 server.proxy_port
+              }}</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span class="w-20 text-gray-500 dark:text-gray-400 font-medium"
+                >{{ __("Hidden") }}:</span
+              >
+              <span class="text-gray-900 dark:text-gray-100 font-mono">{{
+                server.hidden ? __("Yes") : __("No")
               }}</span>
             </div>
           </div>
@@ -99,13 +108,14 @@
               class="bg-gray-50 dark:bg-gray-700/50 text-left text-xs font-medium text-gray-700 dark:text-gray-300"
             >
               <tr>
-                <th class="px-6 py-4 font-semibold">Country</th>
-                <th class="px-6 py-4 font-semibold">IP Address</th>
-                <th class="px-6 py-4 font-semibold">Port</th>
-                <th class="px-6 py-4 font-semibold">SOCKS</th>
-                <th class="px-6 py-4 font-semibold">Proxy</th>
-                <th class="px-6 py-4 font-semibold">Type</th>
-                <th class="px-6 py-4 font-semibold">Actions</th>
+                <th class="px-6 py-4 font-semibold">{{ __("Country") }}</th>
+                <th class="px-6 py-4 font-semibold">{{ __("IP Address") }}</th>
+                <th class="px-6 py-4 font-semibold">{{ __("Port") }}</th>
+                <th class="px-6 py-4 font-semibold">{{ __("SOCKS") }}</th>
+                <th class="px-6 py-4 font-semibold">{{ __("Proxy") }}</th>
+                <th class="px-6 py-4 font-semibold">{{ __("Type") }}</th>
+                <th class="px-6 py-4 font-semibold">{{ __("Hidden") }}</th>
+                <th class="px-6 py-4 font-semibold">{{ __("Actions") }}</th>
               </tr>
             </thead>
 
@@ -148,7 +158,19 @@
                         : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
                     "
                   >
-                    {{ server.internal ? "Internal" : "Public" }}
+                    {{ server.internal ? __("Internal") : __("Public") }}
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+                    :class="
+                      server.hidden
+                        ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                        : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
+                    "
+                  >
+                    {{ server.hidden ? __("Yes") : __("No") }}
                   </span>
                 </td>
                 <td class="px-6 py-4 flex gap-2">
