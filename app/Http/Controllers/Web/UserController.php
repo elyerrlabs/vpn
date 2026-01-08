@@ -13,7 +13,7 @@ final class UserController extends WebController
             'menus' => resolveInertiaRoutes(config('menus.vpn_user_routes')),
             'routes' => [
                 'peers' => route('module.vpn.api.users.peers.index'),
-                'servers' => route('module.vpn.api.users.servers.index'),
+                'servers' => route('module.vpn.api.users.lists.servers'),
                 'wireguard' => route('module.vpn.api.users.wireguard.index')
             ]
         ]);
