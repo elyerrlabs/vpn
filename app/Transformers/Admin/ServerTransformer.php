@@ -67,6 +67,7 @@ class ServerTransformer extends TransformerAbstract
             ],
             'socks_port' => $server->socks_port ?? 1090,
             'proxy_port' => $server->proxy_port ?? 1080,
+            'hidden' => $server->hidden ? true : false,
             'created' => $this->format_date($server->created_at),
             'updated' => $this->format_date($server->updated_at),
             'links' => [

@@ -55,7 +55,8 @@ class ServerTransformer extends TransformerAbstract
             "ip" => $server->ip,
             "port" => $server->proxy_port ?? 1080,
             'url' => $server->url ?? $server->ip,
-            "data" => location($server->ip)
+            "data" => location($server->ip),
+            "provided_by" => $server->user->name ?? config('app.org_name')
         ];
     }
 }
