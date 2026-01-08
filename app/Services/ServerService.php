@@ -49,8 +49,12 @@ final class ServerService implements Service
     {
         $query = $this->repository->query();
 
+        if ($request->filled('hidden')) {
+            $query->where('hidden', $request->hidden);
+        }
+
         if ($request->filled('user_id')) {
-            $query->where('user_id', auth()->user()->id);
+            $query->where('user_id', $request->user()->id);
         }
 
         if ($request->filled('internal')) {
@@ -74,11 +78,24 @@ final class ServerService implements Service
      */
     public function searchForUser(Request $request)
     {
-        $request->merge([
-            'user_id' => auth()->user()->id
-        ]);
+        $query = $this->repository->query();
 
-        return $this->search($request);
+        $query->where('user_id', $request->user()->id);
+        $query->where('internal', '=', false);
+
+        if ($request->filled('hidden')) {
+            $query->where('hidden', $request->hidden);
+        }
+
+        if ($request->filled('name')) {
+            $query->whereRaw('lower(name) like ?', ['%' . strtolower($request->name) . '%']);
+        }
+
+        if ($request->filled('url')) {
+            $query->whereRaw('lower(url) like ?', ['%' . strtolower($request->url) . '%']);
+        }
+
+        return $query;
     }
 
     /**
