@@ -2,6 +2,7 @@
 
 namespace Vpn\App\Transformers\User;
 
+use Elyerr\ApiResponse\Assets\Asset;
 use League\Fractal\TransformerAbstract;
 use Vpn\App\Models\Wireguard;
 
@@ -23,8 +24,9 @@ use Vpn\App\Models\Wireguard;
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-class WireguardTransformer extends TransformerAbstract
+class UserWireguardTransformer extends TransformerAbstract
 {
+    use Asset;
     /**
      * List of resources to automatically include
      *
@@ -53,11 +55,27 @@ class WireguardTransformer extends TransformerAbstract
         return [
             'id' => $wireguard->id,
             'slug' => $wireguard->slug,
-            'country' => $wireguard->server->name,
-            'data' => location($wireguard->server->ip),
-            'by' => [
-                'name' => $wireguard->server?->user?->name ?? config('app.name'),
-                'last_name' => $wireguard->server?->user?->last_name ?? config('app.org_name')
+            'subnet' => $wireguard->subnet,
+            'gateway' => $wireguard->gateway,
+            'private_key' => $wireguard->private_key,
+            'listen_port' => $wireguard->listen_port,
+            'dns' => $wireguard->dns,
+            'dns_enabled' => $wireguard->dns_enabled ? true : false,
+            'network_interface' => $wireguard->network_interface,
+            'mounted' => $wireguard->mounted ? true : false,
+            'public' => $wireguard->public ? true : false,
+            'server' => [
+                'id' => $wireguard->server->id,
+                'name' => $wireguard->server->name,
+                'url' => $wireguard->server->url,
+                'ip' => $wireguard->server->ip,
+            ],
+            'links' => [
+                'index' => route('module.vpn.api.users.wireguard.index'),
+                'store' => route('module.vpn.api.users.wireguard.store'),
+                'show' => route('module.vpn.api.users.wireguard.show', ['wireguard' => $wireguard->id]),
+                'update' => route('module.vpn.api.users.wireguard.update', ['wireguard' => $wireguard->id]),
+                'destroy' => route('module.vpn.api.users.wireguard.destroy', ['wireguard' => $wireguard->id]),
             ],
         ];
     }

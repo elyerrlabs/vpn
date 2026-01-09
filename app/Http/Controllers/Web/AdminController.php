@@ -31,7 +31,7 @@ final class AdminController extends WebController
     public function __construct()
     {
         parent::__construct();
-        $this->middleware('scope:administrator:vpn:full,administrator:vpn:view')->only('index', 'interfaces');
+        $this->middleware('scope:administrator:vpn:full,administrator:vpn:view');
 
     }
 

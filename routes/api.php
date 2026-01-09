@@ -24,6 +24,7 @@ Route::group([
     Route::get('/servers/all', [\Vpn\App\Http\Controllers\Api\User\ServerController::class, 'listServers'])->name('lists.servers');
     Route::resource('servers', \Vpn\App\Http\Controllers\Api\User\ServerController::class)->except('edit', 'create');
 
-    Route::resource('wireguard', \Vpn\App\Http\Controllers\Api\User\WireguardController::class)->only('index');
+    Route::get('wireguard/all', [\Vpn\App\Http\Controllers\Api\User\WireguardController::class, 'listWireguardServersForUser'])->name('lists.wireguard');
+    Route::resource('wireguard', \Vpn\App\Http\Controllers\Api\User\WireguardController::class)->except('edit', 'create');
     Route::resource('peers', \Vpn\App\Http\Controllers\Api\User\PeerController::class)->only('index', 'store', 'update', 'destroy');
 });

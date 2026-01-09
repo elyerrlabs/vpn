@@ -4,8 +4,9 @@ namespace Vpn\App\Http\Controllers\Api\User;
 
 use Illuminate\Http\Request;
 use Vpn\App\Services\WireguardService;
-use App\Http\Controllers\ApiController; 
+use App\Http\Controllers\ApiController;
 use Vpn\App\Transformers\User\WireguardTransformer;
+use Vpn\App\Transformers\User\UserWireguardTransformer;
 
 /*
  * VPN - Server-side software for centralized administration and node management of a VPN service.
@@ -41,6 +42,19 @@ class WireguardController extends ApiController
     {
         parent::__construct();
         $this->service = $wireguardService;
+        $this->middleware('scope:administrator:vpn:full,commerce:vpn:advanced,commerce:vpn:intermediate,commerce:vpn:basic');
+    }
+
+    /**
+     * Index
+     * @param Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function listWireguardServersForUser(Request $request)
+    {
+        $query = $this->service->listWireguardServersForUser($request);
+
+        return $this->showAllByBuilder($query, WireguardTransformer::class);
     }
 
     /**
@@ -49,8 +63,69 @@ class WireguardController extends ApiController
      */
     public function index(Request $request)
     {
-        $data = $this->service->search($request);
+        $data = $this->service->searchForUser($request);
 
-        return $this->showAllByBuilder($data, WireguardTransformer::class);
+        return $this->showAllByBuilder($data, UserWireguardTransformer::class);
+    }
+
+    /**
+     * Store
+     * @param Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'slug' => ['required', 'max:150', 'min:3'],
+            'listen_port' => ['required', 'max:5'],
+            'dns' => ['nullable', 'ipv4'],
+            'dns_enabled' => ['nullable', 'boolean'],
+            'network_interface' => ['required'],
+            'mounted' => ['nullable', 'boolean'],
+            'public' => ['nullable', 'boolean'],
+            'server_id' => ['required', 'exists:vpn_servers,id']
+        ]);
+
+
+        $model = $this->service->create($request->toArray());
+
+        return $this->showOne($model, UserWireguardTransformer::class, 201);
+    }
+
+    /**
+     * Show specific resource
+     * @param string $id
+     * @return \Elyerr\ApiResponse\Assets\JsonResponser
+     */
+    public function show(string $id)
+    {
+        $model = $this->service->detailsForUser($id);
+
+        return $this->showOne($model, UserWireguardTransformer::class);
+    }
+
+    /**
+     * Update specific resource
+     * @param \App\Http\Requests\Wireguard\UpdateRequest $request
+     * @param string $id
+     * @return \Elyerr\ApiResponse\Assets\JsonResponser
+     */
+    public function update(Request $request, string $id)
+    {
+        $model = $this->service->updateForUser($id, $request->toArray());
+
+        return $this->showOne($model, UserWireguardTransformer::class);
+    }
+
+    /**
+     * Destroy specific resource
+     * @param string $id
+     * @return \Elyerr\ApiResponse\Assets\JsonResponser
+     */
+    public function destroy(string $id)
+    {
+        $model = $this->service->deleteForUser($id);
+
+        return $this->showOne($model, UserWireguardTransformer::class);
     }
 }

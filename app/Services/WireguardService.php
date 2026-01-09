@@ -49,6 +49,45 @@ final class WireguardService extends MasterService implements Service
      * @param Request $request
      * @return \Illuminate\Database\Eloquent\Builder<Wireguard>
      */
+    public function listWireguardServersForUser(Request $request)
+    {
+        $query = $this->repository->query();
+
+        $query->whereHas(
+            'server',
+            function ($query) use ($request) {
+
+                if ($request->filled('internal')) {
+                    $query->where('internal', $request->internal);
+                }
+
+                $query->where('hidden', false);
+                $query->orWhere('user_id', $request->user()->id);
+            }
+        );
+
+        $query->where('mounted', true);
+
+        if ($request->filled('slug')) {
+            $query->whereRaw('lower(slug) like ?', ['%' . strtolower('slug') . '%']);
+        }
+
+        if ($request->filled('server_id')) {
+            $query->where('server_id', $request->server_id);
+        }
+
+        if ($request->filled('public')) {
+            $query->orWhere('public', "=", $request->public);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Search for admins
+     * @param Request $request
+     * @return \Illuminate\Database\Eloquent\Builder<Wireguard>
+     */
     public function search(Request $request)
     {
         $query = $this->repository->query();
@@ -138,6 +177,15 @@ final class WireguardService extends MasterService implements Service
     public function details(string $id)
     {
         return $this->repository->find($id);
+    }
+
+
+    public function detailsForUser(string $id)
+    {
+        return $this->repository->query()->where('id', $id)
+            ->whereHas('server', function ($query) {
+                $query->where('user_id', request()->user()->id);
+            })->first();
     }
 
     /**
@@ -253,6 +301,57 @@ final class WireguardService extends MasterService implements Service
     }
 
     /**
+     * Update interface for users servers
+     * @param string $id
+     * @param array $data
+     * @return Wireguard|null
+     */
+    public function updateForUser(string $id, array $data)
+    {
+        $model = $this->repository->query()->where('id', $id)
+            ->whereHas(
+                'server',
+                function ($query) {
+                    $query->where('user_id', request()->user()->id);
+                }
+            )->first();
+
+
+        throw_if(
+            empty($model),
+            new ReportError(__('Resource can not be found'), 404)
+        );
+
+        if ($model->listen_port != $data['listen_port']) {
+            $model->listen_port = $data['listen_port'];
+        }
+
+        if ($model->dns != $data['dns']) {
+            $model->dns = $data['dns'];
+        }
+
+        if ($model->dns_enabled != $data['dns_enabled']) {
+            $model->dns_enabled = $data['dns_enabled'];
+        }
+
+        if ($model->network_interface != $data['network_interface']) {
+            $model->network_interface = $data['network_interface'];
+        }
+
+        if ($model->mounted != $data['mounted']) {
+            $model->mounted = $data['mounted'];
+        }
+
+        if ($model->public != $data['public']) {
+            $model->public = $data['public'];
+        }
+
+        $model->push();
+
+        return $model;
+    }
+
+    /**
      * Delete resource
      * @param string $id
      * @return Wireguard
@@ -281,10 +380,13 @@ final class WireguardService extends MasterService implements Service
      */
     public function deleteForUser(string $id)
     {
-        $model = $this->repository->query()
-            ->where('user_id', request()->user()->id)
-            ->where('id', $id)
-            ->first();
+        $model = $this->repository->query()->where('id', $id)
+            ->whereHas(
+                'server',
+                function ($query) {
+                    $query->where('user_id', request()->user()->id);
+                }
+            )->first();
 
         if (empty($model)) {
             throw new ReportError(__('Server can not be found'), 404);

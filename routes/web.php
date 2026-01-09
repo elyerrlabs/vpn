@@ -11,5 +11,8 @@ Route::group([
     'as' => 'users.'
 ], function () {
 
+    Route::get('servers', [UserController::class, 'servers'])->name('servers');
+    Route::get('wireguard', [UserController::class, 'wireguard'])->name('wireguard');
+
     Route::get('/peers', [UserController::class, 'peers'])->name('peers');
 });
