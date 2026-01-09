@@ -2,7 +2,7 @@
  * @license MIT */
 
 /*!
-  * shared v11.2.7
+  * shared v11.2.8
   * (c) 2025 kazuya kawaguchi
   * Released under the MIT License.
   */
