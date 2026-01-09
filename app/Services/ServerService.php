@@ -74,7 +74,11 @@ final class ServerService implements Service
         return $query;
     }
 
-
+    /**
+     * List server available for users
+     * @param Request $request
+     * @return \Illuminate\Database\Eloquent\Builder<\Vpn\App\Models\Server>
+     */
     public function listServerForUsers(Request $request)
     {
         $query = $this->repository->query();
@@ -107,7 +111,7 @@ final class ServerService implements Service
         $query = $this->repository->query();
 
         $query->where('user_id', $request->user()->id);
-        $query->where('internal', '=', false);
+        $query->where('internal', false);
 
         if ($request->filled('hidden')) {
             $query->where('hidden', $request->hidden);
@@ -149,28 +153,24 @@ final class ServerService implements Service
             throw new ReportError(__('Server can not be found'), 404);
         }
 
-        if ($this->is_different($model->name, $data['name'])) {
+        if ($model->internal && $this->is_different($model->name, $data['name'])) {
             $model->name = $data['name'];
         }
 
-        if ($model->ip != $data['ip'] && $model->wireguards()->count() == 0) {
+        if ($model->internal && $model->ip != $data['ip'] && $model->wireguards()->count() == 0) {
             $model->ip = $data['ip'];
         }
 
-        if ($model->port != $data['port']) {
+        if ($model->internal && $model->port != $data['port']) {
             $model->port = $data['port'];
         }
 
-        if ($model->socks_port != $data['socks_port']) {
+        if ($model->internal && $model->socks_port != $data['socks_port']) {
             $model->socks_port = $data['socks_port'];
         }
 
-        if ($model->proxy_port != $data['proxy_port']) {
+        if ($model->internal && $model->proxy_port != $data['proxy_port']) {
             $model->proxy_port = $data['proxy_port'];
-        }
-
-        if ($model->internal != $data['internal']) {
-            $model->internal = $data['internal'];
         }
 
         if ($model->hidden != $data['hidden']) {

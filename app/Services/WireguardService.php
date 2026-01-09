@@ -2,6 +2,7 @@
 
 namespace Vpn\App\Services;
 
+use Elyerr\ApiResponse\Assets\Asset;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Vpn\App\Models\Wireguard;
@@ -30,6 +31,8 @@ use Elyerr\ApiResponse\Exceptions\ReportError;
 final class WireguardService extends MasterService implements Service
 {
 
+    use Asset;
+
     /**
      * Wireguard repository
      * @var WireguardRepository
@@ -41,10 +44,28 @@ final class WireguardService extends MasterService implements Service
         $this->repository = app(WireguardRepository::class);
     }
 
-
+    /**
+     * Search for admins
+     * @param Request $request
+     * @return \Illuminate\Database\Eloquent\Builder<Wireguard>
+     */
     public function search(Request $request)
     {
         $query = $this->repository->query();
+
+        $query->whereHas(
+            'server',
+            function ($query) use ($request) {
+
+                if ($request->filled('internal')) {
+                    $query->where('internal', $request->internal);
+                }
+
+                if ($request->filled('hidden')) {
+                    $query->where('hidden', $request->hidden);
+                }
+            }
+        );
 
         if ($request->filled('slug')) {
             $query->whereRaw('lower(slug) like ?', ['%' . strtolower('slug') . '%']);
@@ -81,11 +102,32 @@ final class WireguardService extends MasterService implements Service
      */
     public function searchForUser(Request $request)
     {
-        $request->merge([
-            'user_id' => $request->user()->id
-        ]);
+        $query = $this->repository->query();
 
-        return $this->search($request);
+        $query->whereHas(
+            'server.user',
+            function ($query) use ($request) {
+                $query->where('user_id', '=', $request->user()->id);
+            }
+        );
+
+        if ($request->filled('slug')) {
+            $query->whereRaw('lower(slug) like ?', ['%' . strtolower('slug') . '%']);
+        }
+
+        if ($request->filled('server_id')) {
+            $query->where('server_id', $request->server_id);
+        }
+
+        if ($request->filled('mounted')) {
+            $query->where('mounted', $request->mounted);
+        }
+
+        if ($request->filled('public')) {
+            $query->orWhere('public', $request->public);
+        }
+
+        return $query;
     }
 
     /**
@@ -173,29 +215,35 @@ final class WireguardService extends MasterService implements Service
      */
     public function update(string $id, array $data)
     {
-        $model = $this->repository->find(($id));
+        $model = $this->repository->find($id);
 
-        if ($model->isDirty('listen_port')) {
+        throw_if(
+            !$model->server->internal,
+            new ReportError(__('This server is provided by a third party and cannot be updated.'), 403)
+        );
+
+
+        if ($model->listen_port != $data['listen_port']) {
             $model->listen_port = $data['listen_port'];
         }
 
-        if ($model->isDirty('dns')) {
+        if ($model->dns != $data['dns']) {
             $model->dns = $data['dns'];
         }
 
-        if ($model->isDirty('dns_enabled')) {
+        if ($model->dns_enabled != $data['dns_enabled']) {
             $model->dns_enabled = $data['dns_enabled'];
         }
 
-        if ($model->isDirty('network_interface')) {
+        if ($model->network_interface != $data['network_interface']) {
             $model->network_interface = $data['network_interface'];
         }
 
-        if ($model->isDirty('mounted')) {
+        if ($model->mounted != $data['mounted']) {
             $model->mounted = $data['mounted'];
         }
 
-        if ($model->isDirty('public')) {
+        if ($model->public != $data['public']) {
             $model->public = $data['public'];
         }
 
