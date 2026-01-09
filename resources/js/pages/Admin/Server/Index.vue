@@ -475,7 +475,7 @@ const search = ref({
   per_page: 15,
   page: 1,
   name: "",
-  internal: null,
+  internal: true,
   hidden: null,
 });
 
