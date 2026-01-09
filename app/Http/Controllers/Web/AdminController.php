@@ -25,6 +25,20 @@ use App\Http\Controllers\WebController;
 final class AdminController extends WebController
 {
 
+    /**
+     * Construct
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->middleware('scope:administrator:vpn:full,administrator:vpn:view')->only('index', 'interfaces');
+
+    }
+
+    /**
+     * Servers
+     * @return \Inertia\Response
+     */
     public function servers()
     {
         return Inertia::render('Admin/Server/Index', [
@@ -36,6 +50,10 @@ final class AdminController extends WebController
         ]);
     }
 
+    /**
+     * Wireguard
+     * @return \Inertia\Response
+     */
     public function wireguard()
     {
         return Inertia::render('Admin/Wireguard/Index', [
