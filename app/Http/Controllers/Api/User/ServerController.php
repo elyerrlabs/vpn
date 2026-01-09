@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Vpn\App\Services\ServerService;
 use App\Http\Controllers\ApiController;
 use Vpn\App\Transformers\User\ServerTransformer;
+use Vpn\App\Transformers\User\UserServerTransformer;
 
 /*
  * VPN - Server-side software for centralized administration and node management of a VPN service.
@@ -49,11 +50,8 @@ class ServerController extends ApiController
      */
     public function listServers(Request $request)
     {
-        $request->merge([
-            'hidden' => false
-        ]);
 
-        $data = $this->service->search($request);
+        $data = $this->service->listServerForUsers($request);
 
         return $this->showAllByBuilder($data, ServerTransformer::class);
     }
@@ -67,7 +65,7 @@ class ServerController extends ApiController
     {
         $data = $this->service->searchForUser($request);
 
-        return $this->showAllByBuilder($data, ServerTransformer::class);
+        return $this->showAllByBuilder($data, UserServerTransformer::class);
     }
 
 
@@ -99,7 +97,7 @@ class ServerController extends ApiController
             'hidden' => $request->hidden ?? false,
         ]);
 
-        return $this->showOne($data, ServerTransformer::class, 201);
+        return $this->showOne($data, UserServerTransformer::class, 201);
     }
 
     /**
@@ -111,7 +109,7 @@ class ServerController extends ApiController
     {
         $data = $this->service->details($id);
 
-        return $this->showOne($data, ServerTransformer::class);
+        return $this->showOne($data, UserServerTransformer::class);
     }
 
     /**
@@ -128,7 +126,7 @@ class ServerController extends ApiController
 
         $data = $this->service->update($id, $request->toArray());
 
-        return $this->showOne($data, ServerTransformer::class);
+        return $this->showOne($data, UserServerTransformer::class);
     }
 
     /**
@@ -140,6 +138,6 @@ class ServerController extends ApiController
     {
         $data = $this->service->delete($id);
 
-        return $this->showOne($data);
+        return $this->showOne($data, UserServerTransformer::class);
     }
 }
