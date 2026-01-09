@@ -58,7 +58,7 @@
             @click="execute"
             class="bg-blue-500 p-4 text-white cursor-pointer"
           >
-            {{ __("Add Server") }}
+            {{ item?.id ? __("Update server") : __("Add Server") }}
           </button>
 
           <button
