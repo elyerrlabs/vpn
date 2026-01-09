@@ -71,11 +71,11 @@ class UserServerTransformer extends TransformerAbstract
             'created' => $this->format_date($server->created_at),
             'updated' => $this->format_date($server->updated_at),
             'links' => [
-                'index' => route('module.vpn.api.admin.servers.index'),
-                'store' => route('module.vpn.api.admin.servers.store'),
-                'show' => route('module.vpn.api.admin.servers.show', ['server' => $server->id]),
-                'update' => route('module.vpn.api.admin.servers.update', ['server' => $server->id]),
-                'destroy' => route('module.vpn.api.admin.servers.destroy', ['server' => $server->id]),
+                'index' => route('module.vpn.api.users.servers.index'),
+                'store' => route('module.vpn.api.users.servers.store'),
+                'show' => route('module.vpn.api.users.servers.show', ['server' => $server->id]),
+                'update' => route('module.vpn.api.users.servers.update', ['server' => $server->id]),
+                'destroy' => route('module.vpn.api.users.servers.destroy', ['server' => $server->id]),
             ],
         ];
     }

@@ -75,7 +75,7 @@ final class ServerService implements Service
     }
 
     /**
-     * List server available for users
+     * List server available for users 
      * @param Request $request
      * @return \Illuminate\Database\Eloquent\Builder<\Vpn\App\Models\Server>
      */
@@ -182,6 +182,55 @@ final class ServerService implements Service
         return $model;
     }
 
+
+    /**
+     * Update Servers only for users
+     * @param string $id
+     * @param array $data
+     * @throws ReportError
+     * @return \Vpn\App\Models\Server|null
+     */
+    public function updateForUser(string $id, array $data)
+    {
+        $model = $this->repository->query()
+            ->where('user_id', request()->user()->id)
+            ->where('id', $id)
+            ->first();
+
+        if (empty($model)) {
+            throw new ReportError(__('Server can not be found'), 404);
+        }
+
+        if ($this->is_different($model->name, $data['name'])) {
+            $model->name = $data['name'];
+        }
+
+        if ($model->ip != $data['ip'] && $model->wireguards()->count() == 0) {
+            $model->ip = $data['ip'];
+        }
+
+        if ($model->port != $data['port']) {
+            $model->port = $data['port'];
+        }
+
+        if ($model->socks_port != $data['socks_port']) {
+            $model->socks_port = $data['socks_port'];
+        }
+
+        if ($model->proxy_port != $data['proxy_port']) {
+            $model->proxy_port = $data['proxy_port'];
+        }
+
+        if ($model->hidden != $data['hidden']) {
+            $model->hidden = $data['hidden'];
+        }
+
+        $model->push();
+
+        return $model;
+    }
+
+
     /**
      * Server details
      * @param string $id
@@ -193,6 +242,18 @@ final class ServerService implements Service
     }
 
     /**
+     * Show details for users
+     * @param string $id
+     */
+    public function detailsForUser(string $id)
+    {
+        return $this->repository->query()
+            ->where('user_id', request()->user()->id)
+            ->where('id', $id)
+            ->first();
+    }
+
+    /**
      * Delete resource
      * @param string $id
      * @throws ReportError
@@ -201,6 +262,28 @@ final class ServerService implements Service
     public function delete(string $id)
     {
         $model = $this->repository->find($id);
+
+        if ($model->wireguards()->count()) {
+            throw new ReportError(__("his server cannot be deleted because WireGuard interfaces are associated with it."), 403);
+        }
+
+        $model->delete();
+
+        return $model;
+    }
+
+    /**
+     * Delete resource for owner user
+     * @param string $id
+     * @throws ReportError
+     * @return \Vpn\App\Models\Server
+     */
+    public function deleteForUser(string $id)
+    {
+        $model = $this->repository->query()
+            ->where('user_id', request()->user()->id)
+            ->where('id', $id)
+            ->first();
 
         if ($model->wireguards()->count()) {
             throw new ReportError(__("his server cannot be deleted because WireGuard interfaces are associated with it."), 403);

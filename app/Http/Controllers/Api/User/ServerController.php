@@ -42,15 +42,15 @@ class ServerController extends ApiController
     {
         parent::__construct();
         $this->service = $serverService;
+        $this->middleware('scope:commerce:vpn:advanced,commerce:vpn:intermediate,commerce:vpn:basic');
     }
 
     /**
-     * Show the all servers available
+     * Show the all servers available for connection
      * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function listServers(Request $request)
     {
-
         $data = $this->service->listServerForUsers($request);
 
         return $this->showAllByBuilder($data, ServerTransformer::class);
@@ -107,7 +107,7 @@ class ServerController extends ApiController
      */
     public function show(string $id)
     {
-        $data = $this->service->details($id);
+        $data = $this->service->detailsForUser($id);
 
         return $this->showOne($data, UserServerTransformer::class);
     }
@@ -124,7 +124,7 @@ class ServerController extends ApiController
             'ip' => ['required', 'ipv4', 'unique:vpn_servers,ip,' . $id]
         ]);
 
-        $data = $this->service->update($id, $request->toArray());
+        $data = $this->service->updateForUser($id, $request->toArray());
 
         return $this->showOne($data, UserServerTransformer::class);
     }
@@ -136,7 +136,7 @@ class ServerController extends ApiController
      */
     public function destroy(string $id)
     {
-        $data = $this->service->delete($id);
+        $data = $this->service->deleteForUser($id);
 
         return $this->showOne($data, UserServerTransformer::class);
     }
