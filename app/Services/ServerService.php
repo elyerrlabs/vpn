@@ -2,6 +2,7 @@
 
 namespace Vpn\App\Services;
 
+use Elyerr\ApiResponse\Assets\Asset;
 use Elyerr\ApiResponse\Exceptions\ReportError;
 use Illuminate\Http\Request;
 use Vpn\App\Contracts\Service;
@@ -27,6 +28,7 @@ use Vpn\App\Repositories\ServerRepository;
 
 final class ServerService implements Service
 {
+    use Asset;
 
     /**
      * Repository
@@ -54,7 +56,7 @@ final class ServerService implements Service
         }
 
         if ($request->filled('user_id')) {
-            $query->where('user_id', $request->user()->id);
+            $query->where('user_id', $request->user()->user_id);
         }
 
         if ($request->filled('internal')) {
@@ -72,8 +74,32 @@ final class ServerService implements Service
         return $query;
     }
 
+
+    public function listServerForUsers(Request $request)
+    {
+        $query = $this->repository->query();
+
+        $query->where('hidden', false);
+
+        $query->orWhere('user_id', $request->user()->id);
+
+        if ($request->filled('internal')) {
+            $query->where('internal', '=', $request->internal);
+        }
+
+        if ($request->filled('name')) {
+            $query->whereRaw('lower(name) like ?', ['%' . strtolower($request->name) . '%']);
+        }
+
+        if ($request->filled('url')) {
+            $query->whereRaw('lower(url) like ?', ['%' . strtolower($request->url) . '%']);
+        }
+
+        return $query;
+    }
+
     /**
-     * Search for user 
+     * Search server for user 
      * @param Request $request
      */
     public function searchForUser(Request $request)
@@ -123,28 +149,32 @@ final class ServerService implements Service
             throw new ReportError(__('Server can not be found'), 404);
         }
 
-        if ($model->isDirty('name')) {
+        if ($this->is_different($model->name, $data['name'])) {
             $model->name = $data['name'];
         }
 
-        if ($model->isDirty('ip') && $model->wireguards()->count() == 0) {
-            $model->name = $data['ip'];
+        if ($model->ip != $data['ip'] && $model->wireguards()->count() == 0) {
+            $model->ip = $data['ip'];
         }
 
-        if ($model->isDirty('port')) {
-            $model->name = $data['port'];
+        if ($model->port != $data['port']) {
+            $model->port = $data['port'];
         }
 
-        if ($model->isDirty('socks_port')) {
-            $model->name = $data['socks_port'];
+        if ($model->socks_port != $data['socks_port']) {
+            $model->socks_port = $data['socks_port'];
         }
 
-        if ($model->isDirty('proxy_port')) {
-            $model->name = $data['proxy_port'];
+        if ($model->proxy_port != $data['proxy_port']) {
+            $model->proxy_port = $data['proxy_port'];
         }
 
-        if ($model->isDirty('internal')) {
-            $model->name = $data['internal'];
+        if ($model->internal != $data['internal']) {
+            $model->internal = $data['internal'];
+        }
+
+        if ($model->hidden != $data['hidden']) {
+            $model->hidden = $data['hidden'];
         }
 
         $model->push();
