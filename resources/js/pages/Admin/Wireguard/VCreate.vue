@@ -90,7 +90,7 @@
             @click="execute"
             class="bg-blue-500 p-4 text-white cursor-pointer"
           >
-            {{ __("Add Server") }}
+            {{ item?.id ? __("Update Server") : __("Add Server") }}
           </button>
 
           <button
@@ -147,13 +147,15 @@ const interfaces = ref([
 const search_server = ref({
   slug: "",
   per_page: 50,
+  hidden: false,
+  internal: true,
 });
 
 const toggle = async () => {
   form.value.slug = "";
   form.value.listen_port = "";
   form.value.dns = "";
-  form.value.dns_enabled = "";
+  form.value.dns_enabled = false;
   form.value.network_interface = "";
   form.value.mounted = true;
   form.value.public = true;
@@ -182,6 +184,7 @@ const addServer = async () => {
     if (res.status == 201) {
       toggle();
       emits("created");
+      $notify.success(__("New wireguard server created successfully"));
     }
   } catch (error) {
     if (error?.response?.data?.message) {
@@ -197,9 +200,10 @@ const addServer = async () => {
 const updateServer = async () => {
   try {
     const res = await $server.put(props.item.links.update, form.value);
-    if (res.status == 201) {
+    if (res.status == 200) {
       toggle();
       emits("created");
+      $notify.success(__("wireguard server updated successfully"));
     }
   } catch (error) {
     if (error?.response?.data?.message) {
