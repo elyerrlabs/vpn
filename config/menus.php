@@ -193,11 +193,28 @@ return [
 
     'vpn_user_routes' => [
         [
+            'id' => 'servers',
+            'name' => 'Servers',
+            'route' => 'module.vpn.web.users.servers',
+            'icon' => 'mdi-store-cog',
+            'service' => true,
+            'position' => 1,
+        ],
+
+        [
+            'id' => 'wireguard',
+            'name' => 'Wireguard',
+            'route' => 'module.vpn.web.users.wireguard',
+            'icon' => 'mdi-store-cog',
+            'service' => true,
+            'position' => 1,
+        ],
+        [
             'id' => 'peers',
             'name' => 'Wireguard Generator',
             'route' => 'module.vpn.web.users.peers',
             'icon' => 'mdi-store-cog',
-            'service' => 'administrator:vpn',
+            'service' => true,
         ],
     ]
 
