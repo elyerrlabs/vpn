@@ -42,7 +42,7 @@ class ServerController extends ApiController
     {
         parent::__construct();
         $this->service = $serverService;
-        $this->middleware('scope:commerce:vpn:advanced,commerce:vpn:intermediate,commerce:vpn:basic');
+        $this->middleware('scope:commerce:administrator:vpn:full,vpn:advanced,commerce:vpn:intermediate,commerce:vpn:basic');
     }
 
     /**
