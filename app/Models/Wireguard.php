@@ -42,6 +42,7 @@ class Wireguard extends Master
         'dns_enabled',
         'network_interface',
         'mounted',
+        'mtu',
         'public',
         'server_id'
     ];
@@ -72,5 +73,14 @@ class Wireguard extends Master
     public function peers()
     {
         return $this->hasMany(Peer::class);
+    }
+
+    /**
+     * Get server ip
+     * @return string
+     */
+    public function getServer()
+    {
+        return "{$this->server->ip}:{$this->listen_port}";
     }
 }

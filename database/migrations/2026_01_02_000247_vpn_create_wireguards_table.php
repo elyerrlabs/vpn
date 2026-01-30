@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Schema;
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-return new class extends Migration {
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -32,6 +32,7 @@ return new class extends Migration {
             $table->uuid('id')->primary();
             $table->string('slug', 150)->index();
             $table->string('subnet');
+            $table->string('mtu');
             $table->string('gateway');
             $table->string('private_key');
             $table->string('listen_port');

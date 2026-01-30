@@ -76,6 +76,8 @@ class UserWireguardTransformer extends TransformerAbstract
                 'show' => route('module.vpn.api.users.wireguard.show', ['wireguard' => $wireguard->id]),
                 'update' => route('module.vpn.api.users.wireguard.update', ['wireguard' => $wireguard->id]),
                 'destroy' => route('module.vpn.api.users.wireguard.destroy', ['wireguard' => $wireguard->id]),
+                'start' => route('module.vpn.api.users.wireguard.start', ['wireguard' => $wireguard->id]),
+                'shutdown' => route('module.vpn.api.users.wireguard.shutdown', ['wireguard' => $wireguard->id]),
             ],
         ];
     }

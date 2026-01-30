@@ -2,9 +2,13 @@
 
 namespace Vpn\App\Http\Controllers\Api\User;
 
+use Vpn\App\Wrapper\Core;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Vpn\App\Services\WireguardService;
 use App\Http\Controllers\ApiController;
+use Vpn\App\Repositories\PeerRepository;
+use Elyerr\ApiResponse\Exceptions\ReportError;
 use Vpn\App\Transformers\User\WireguardTransformer;
 use Vpn\App\Transformers\User\UserWireguardTransformer;
 
@@ -86,8 +90,7 @@ class WireguardController extends ApiController
             'server_id' => ['required', 'exists:vpn_servers,id']
         ]);
 
-
-        $model = $this->service->create($request->toArray());
+        $model = $this->service->create($request->toArray(), true);
 
         return $this->showOne($model, UserWireguardTransformer::class, 201);
     }
@@ -99,7 +102,7 @@ class WireguardController extends ApiController
      */
     public function show(string $id)
     {
-        $model = $this->service->detailsForUser($id);
+        $model = $this->service->details($id, true);
 
         return $this->showOne($model, UserWireguardTransformer::class);
     }
@@ -112,7 +115,7 @@ class WireguardController extends ApiController
      */
     public function update(Request $request, string $id)
     {
-        $model = $this->service->updateForUser($id, $request->toArray());
+        $model = $this->service->update($id, $request->toArray(), true);
 
         return $this->showOne($model, UserWireguardTransformer::class);
     }
@@ -124,8 +127,32 @@ class WireguardController extends ApiController
      */
     public function destroy(string $id)
     {
-        $model = $this->service->deleteForUser($id);
+        $model = $this->service->delete($id, true);
 
         return $this->showOne($model, UserWireguardTransformer::class);
+    }
+
+    /**
+     * Shutdown the wireguard interface
+     * @param string $id
+     * @return void
+     */
+    public function shutdown(string $id)
+    {
+        $this->service->shutdown($id, true);
+
+        return $this->message(__('The WireGuard server is already stopped'), 200);
+    }
+
+    /**
+     * Start the wireguard interface
+     * @param string $id
+     * @return void
+     */
+    public function start(string $id)
+    {
+        $this->service->start($id, true);
+
+        return $this->message(__('The WireGuard server has been started'), 200);
     }
 }
