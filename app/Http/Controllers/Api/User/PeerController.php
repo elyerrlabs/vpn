@@ -1,9 +1,14 @@
 <?php
+
 namespace Vpn\App\Http\Controllers\Api\User;
 
+use data;
+use Vpn\App\Wrapper\Core;
 use Illuminate\Http\Request;
 use Vpn\App\Services\PeerService;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ApiController;
+use Elyerr\ApiResponse\Exceptions\ReportError;
 use Vpn\App\Transformers\User\PeerTransformer;
 
 /*
@@ -26,7 +31,6 @@ use Vpn\App\Transformers\User\PeerTransformer;
 
 class PeerController extends ApiController
 {
-
     /**
      * Repository
      * @var PeerService
@@ -67,21 +71,9 @@ class PeerController extends ApiController
             'wireguard_id' => ['required', 'exists:vpn_wireguards,id']
         ]);
 
-        $data = $this->service->create($request->toArray());
+        $model = $this->service->create($request->toArray());
 
-        return $this->showOne($data, PeerTransformer::class, 201);
-    }
-
-    /**
-     * On and off the current peer
-     * @param \App\Models\Server\Peer $peer
-     * @return mixed|\Illuminate\Http\JsonResponse
-     */
-    public function update(Request $request, string $id)
-    {
-        $data = $this->service->update($id, $request->toArray());
-
-        return $this->showOne($data, PeerTransformer::class);
+        return $this->showOne($model, PeerTransformer::class, 201);
     }
 
     /**
@@ -91,8 +83,8 @@ class PeerController extends ApiController
      */
     public function destroy(string $id)
     {
-        $data = $this->service->delete($id);
+        $model = $this->service->delete($id);
 
-        return $this->showOne($data, PeerTransformer::class);
+        return $this->showOne($model, PeerTransformer::class);
     }
 }

@@ -2,11 +2,14 @@
 
 namespace Vpn\App\Services;
 
+use Vpn\App\Wrapper\Core;
 use Illuminate\Http\Request;
+use Vpn\App\Models\Wireguard;
 use Vpn\App\Contracts\Service;
+use Illuminate\Support\Facades\DB;
 use Vpn\App\Repositories\PeerRepository;
-use Elyerr\ApiResponse\Exceptions\ReportError;
 use Vpn\App\Repositories\WireguardRepository;
+use Elyerr\ApiResponse\Exceptions\ReportError;
 
 /*
  * VPN - Server-side software for centralized administration and node management of a VPN service.
@@ -46,35 +49,43 @@ final class PeerService extends MasterService implements Service
      */
     public function search(Request $request)
     {
-        $query = $this->repository->query();
-
-        if ($request->filled('name')) {
-            $query->whereRaw('lower(name) like ?', ['%' . strtolower($request->name) . '%']);
-        }
-
-        if ($request->filled('wireguard_id')) {
-            $query->where('wireguard_id', '=', $request->wireguard_id);
-        }
-
-        if ($request->filled('mounted')) {
-            $query->where('mounted', '=', $request->mounted);
-        }
-
-        if ($request->filled('user_id')) {
-            $query->where('user_id', '=', $request->user_id);
-        }
-
-        if ($request->filled('server_id')) {
-            $query->whereHas(
-                'wireguard.server',
-                function ($query) use ($request) {
-                    $query->where('id', '=', $request->server_id);
-                }
+        return $this->repository->query()
+            ->when(
+                $request->filled('name'),
+                fn ($q) =>
+                $q->where('name', 'like', '%' . $request->name . '%')
+            )
+            ->when(
+                $request->filled('wireguard_id'),
+                fn ($q) =>
+                $q->where('wireguard_id', $request->wireguard_id)
+            )
+            ->when(
+                $request->filled('mounted'),
+                fn ($q) =>
+                $q->where('mounted', $request->mounted)
+            )
+            ->when(
+                $request->filled('stand_by'),
+                fn ($q) =>
+                $q->where('stand_by', $request->stand_by)
+            )
+            ->when(
+                $request->filled('user_id'),
+                fn ($q) =>
+                $q->where('user_id', $request->user_id)
+            )
+            ->when(
+                $request->filled('server_id'),
+                fn ($q) =>
+                $q->whereHas(
+                    'wireguard.server',
+                    fn ($s) =>
+                    $s->where('id', $request->server_id)
+                )
             );
-        }
-
-        return $query;
     }
+
 
     /**
      * Search resource for user
@@ -107,73 +118,90 @@ final class PeerService extends MasterService implements Service
      */
     public function create(array $data)
     {
-        /**
-         * Retrieve the user
-         */
-        $user = request()->user();
 
-        //---------check plans --------------------------//
-        if (!app()->environment(['local', 'dev'])) {
-            //user access
-            $this->verifyPlan($user);
-        }
+        $model = DB::transaction(function () use ($data) {
 
-        //Retrieve Wireguard server
-        $wireguard_server = app(WireguardRepository::class)
+            /**
+             * Retrieve the user
+             */
+            $user = request()->user();
+
+            //---------check plans --------------------------//
+            if (!app()->environment(['local', 'dev'])) {
+                //user access
+                $this->verifyPlan($user);
+            }
+
+            //Retrieve Wireguard server
+            $wireguard_server = app(WireguardRepository::class)
             ->query()
             ->where('id', $data['wireguard_id'])
             ->first();
 
-        //Generate pair keys to the client
-        $keys = $this->generatePairKeys();
+            //Generate pair keys to the client
+            $keys = $this->generatePairKeys();
 
-        //Preshared key to the client
-        $preshared_key = $this->generatePresharedkey();
-        $dns = $wireguard_server->dns_enabled ? $wireguard_server->dns : null;
+            //Preshared key to the client
+            $preshared_key = $this->generatePresharedkey();
+            $dns = $wireguard_server->dns_enabled ? $wireguard_server->dns : null;
 
-        //Generate new random ip
-        $ip_allowed = $this->generateRandomIp($wireguard_server->subnet);
+            //Generate new random ip
+            $ip_allowed = $this->generateRandomIp($wireguard_server->subnet);
 
-        //Create new peer
-        $model = $this->repository->create([
-            'name' => $data['name'],
-            'public_key' => $keys['public_key'],
-            'preshared_key' => $preshared_key,
-            'allowed_ips' => $ip_allowed,
-            'persistent_keepalive' => 25,
-            'mtu' => 1420,
-            'user_id' => $user->id,
-            'wireguard_id' => $wireguard_server->id,
-            'mounted' => true
-        ]);
+            //Create new peer
+            $model = $this->repository->create([
+                'name' => $data['name'],
+                'public_key' => $keys['public_key'],
+                'preshared_key' => $preshared_key,
+                'allowed_ips' => $ip_allowed,
+                'persistent_keepalive' => 25,
+                'user_id' => $user->id,
+                'wireguard_id' => $wireguard_server->id,
+                'mounted' => true
+                ]);
 
-        /**
-         * Create peer configuration
-         */
-        $config[] = "[Interface]";
-        $config[] = "PrivateKey = {$keys['private_key']}";
-        /**
-         * Note: The 'ListenPort' directive has been commented out because it is not supported on some platforms.
-         * Certain systems do not allow explicitly setting this parameter in the WireGuard configuration.
-         * Therefore, it is omitted to ensure broader compatibility.
-         */
-        // $config[] = "ListenPort = {$wireguard_server->listen_port}";
+            // Mount peer
+            $this->core($model->wireguard)->addPeer(
+                $user->id,
+                $model->name,
+                $model->wireguard->slug,
+                $model->public_key,
+                $model->allowed_ips,
+                $model->wireguard->getServer(),
+                $model->preshared_key,
+                $model->persistent_keepalive
+            );
 
-        $config[] = "Address =  {$ip_allowed}/32";
-        if ($wireguard_server->dns_enabled) {
-            $config[] = "DNS =  {$dns}";
-        }
-        $config[] = "";
-        $config[] = "[Peer]";
-        $config[] = "PublicKey = {$this->generatePubKey($wireguard_server->private_key)}";
-        $config[] = "Endpoint = {$wireguard_server->server->ip}:{$wireguard_server->listen_port}";
-        $config[] = "AllowedIPs = 0.0.0.0/0, ::/0";
-        $config[] = "PresharedKey = {$preshared_key}";
-        //$config[] = "MTU = {$model->mtu}";
-        $config[] = "PersistentKeepalive = {$model->persistent_keepalive}";
+            /**
+             * Create peer configuration
+            */
+            $config[] = "[Interface]";
+            $config[] = "PrivateKey = {$keys['private_key']}";
+            $config[] = "MTU = {$model->wireguard->mtu}";
+            /**
+             * Note: The 'ListenPort' directive has been commented out because it is not supported on some platforms.
+             * Certain systems do not allow explicitly setting this parameter in the WireGuard configuration.
+             * Therefore, it is omitted to ensure broader compatibility.
+            */
+            // $config[] = "ListenPort = {$wireguard_server->listen_port}";
 
-        // Add configuration to the model
-        $model->config = implode("\n", $config);
+            $config[] = "Address =  {$ip_allowed}/32";
+            if ($wireguard_server->dns_enabled) {
+                $config[] = "DNS =  {$dns}";
+            }
+            $config[] = "";
+            $config[] = "[Peer]";
+            $config[] = "PublicKey = {$this->generatePubKey($wireguard_server->private_key)}";
+            $config[] = "Endpoint = {$wireguard_server->server->ip}:{$wireguard_server->listen_port}";
+            $config[] = "AllowedIPs = 0.0.0.0/0, ::/0";
+            $config[] = "PresharedKey = {$preshared_key}";
+            $config[] = "PersistentKeepalive = {$model->persistent_keepalive}";
+
+            // Add configuration to the model
+            $model->config = implode("\n", $config);
+
+            return $model;
+        });
 
         return $model;
     }
@@ -193,12 +221,10 @@ final class PeerService extends MasterService implements Service
 
         if (empty($model)) {
             throw new ReportError(__("The peer can not be found"), 404);
-
         }
 
-        if ($model->isDirty('mounted')) {
-            $model->mounted = $data['mounted'];
-        }
+        $model->fill($data);
+        $model->push();
 
         return $model;
     }
@@ -213,34 +239,20 @@ final class PeerService extends MasterService implements Service
     {
         $model = $this->repository->find($id);
 
-        if (empty($model)) {
-            throw new ReportError(__("The peer can not be found"), 404);
+        DB::transaction(function () use ($model) {
 
-        }
+            if (empty($model)) {
+                throw new ReportError(__("The peer can not be found"), 404);
+            }
 
-        $model->delete();
+            $this->core($model->wireguard)->deletePeer(
+                $model->wireguard->slug,
+                $model->public_key
+            );
 
-        return $model;
-    }
+            $model->delete();
 
-    /**
-     * Delete resource
-     * @param string $id
-     * @return \Vpn\App\Models\Peer
-     */
-    public function deleteForUser(string $id)
-    {
-        $model = $this->repository->query()
-            ->where('user_id', request()->user()->id)
-            ->where('id', $id)
-            ->first();
-
-        if (empty($model)) {
-            throw new ReportError(__("The peer can not be found"), 404);
-
-        }
-
-        $model->delete();
+        });
 
         return $model;
     }

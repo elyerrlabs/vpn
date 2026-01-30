@@ -34,9 +34,9 @@ class Peer extends Master
         'public_key',
         'preshared_key',
         'allowed_ips',
-        'persistent_keepalive',
-        'mtu',
+        'persistent_keepalive', 
         'mounted',
+        'stand_by',
         'user_id',
         'wireguard_id',
     ];

@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Schema;
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-return new class extends Migration {
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -34,9 +34,9 @@ return new class extends Migration {
             $table->string('public_key');
             $table->string('preshared_key');
             $table->string('allowed_ips');
-            $table->string('persistent_keepalive');
-            $table->unsignedInteger('mtu');
+            $table->string('persistent_keepalive'); 
             $table->boolean('mounted')->default(false);
+            $table->boolean('stand_by')->default(false);
             $table->uuid('user_id')->index();
             $table->uuid('wireguard_id')->index();
             $table->timestamps();
