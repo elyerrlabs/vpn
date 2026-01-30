@@ -55,7 +55,7 @@ final class UserController extends WebController
             'routes' => [
                 'peers' => route('module.vpn.api.users.peers.index'),
                 'servers' => route('module.vpn.api.users.lists.servers'),
-                'wireguard' => route('module.vpn.api.users.wireguard.index')
+                'wireguard' => route('module.vpn.api.users.lists.wireguard')
             ]
         ]);
     }

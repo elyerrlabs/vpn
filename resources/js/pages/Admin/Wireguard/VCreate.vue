@@ -84,6 +84,13 @@
             v-model="form.public"
             :error="errors.public"
           />
+
+          <v-switch
+            v-if="item?.id"
+            :label="__('Restart server')"
+            v-model="form.restart"
+            :error="errors.restart"
+          />
         </div>
         <div class="flex justify-between items-center">
           <button

@@ -619,6 +619,8 @@
                       :title="__('Update Interface')"
                       :button-name="__('Edit')"
                     />
+
+                    <v-actions :item="wg" @updated="getWireguardInterfaces" />
                   </div>
                 </td>
               </tr>
@@ -687,6 +689,7 @@ import VSelect from "@vpn/components/VSelect.vue";
 import { ref, onMounted, computed } from "vue";
 import VCreate from "./VCreate.vue";
 import VDelete from "./VDelete.vue";
+import VActions from "./Actions.vue";
 
 const page = usePage();
 const wireguard = ref([]);
