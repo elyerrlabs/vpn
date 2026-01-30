@@ -2,6 +2,8 @@
 
 namespace Vpn\App\Services;
 
+use Vpn\App\Wrapper\Core;
+use Vpn\App\Models\Wireguard;
 use App\Repositories\Traits\Scopes;
 use Vpn\App\Repositories\PeerRepository;
 use Elyerr\ApiResponse\Exceptions\ReportError;
@@ -45,8 +47,35 @@ class MasterService
         ];
     }
 
+
     /**
-     * Generate a PrivKey 
+     * Callable grpc function
+     * @param callable $fn
+     * @throws ReportError
+     * @return void
+     */
+    public function grpc(callable $fn)
+    {
+        try {
+            $fn();
+        } catch (\Throwable $th) {
+            $status = Core::grpcToHttp($th->getCode());
+            throw new ReportError(__($status['message']), $status['status']);
+        }
+    }
+
+    /**
+     * Core
+     * @param Wireguard $model
+     * @return Core
+     */
+    public function core(Wireguard $model): Core
+    {
+        return new Core($model->server->ip, $model->server->port);
+    }
+
+    /**
+     * Generate a PrivKey
      * @return string
      */
     public function generatePrivKey()
@@ -64,7 +93,7 @@ class MasterService
     }
 
     /**
-     *  Generate a pair keys (private and public key)  
+     *  Generate a pair keys (private and public key)
      * @return string[]
      */
     public function generatePairKeys()
@@ -164,7 +193,7 @@ class MasterService
 
         //check user plan
         $userLimit = collect($this->plans)
-            ->filter(fn($limit, $plan) => $access->contains($plan))
+            ->filter(fn ($limit, $plan) => $access->contains($plan))
             ->first() ?? config('third-party.vpn.free');
 
         throw_if(
@@ -257,13 +286,13 @@ class MasterService
 
         //check user plan
         $amount = collect($this->plans)
-            ->filter(fn($limit, $plan) => $access->contains($plan))
+            ->filter(fn ($limit, $plan) => $access->contains($plan))
             ->first() ?? config('vpn.free');
 
 
         $count_peer = app(PeerRepository::class)
             ->query()
-            ->where('user_id', auth()->user()->id)
+            ->where('user_id', request()->user()->id)
             ->count();
 
         return [
