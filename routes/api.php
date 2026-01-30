@@ -13,6 +13,8 @@ Route::group([
 
     Route::resource('servers', \Vpn\App\Http\Controllers\Api\Admin\ServerController::class)->except('create', 'edit');
     Route::resource('wireguard', \Vpn\App\Http\Controllers\Api\Admin\WireguardController::class)->except('create', 'edit');
+    Route::put('wireguard/{wireguard}/shutdown', [\Vpn\App\Http\Controllers\Api\Admin\WireguardController::class, 'shutdown'])->name('wireguard.shutdown');
+    Route::put('wireguard/{wireguard}/start', [\Vpn\App\Http\Controllers\Api\Admin\WireguardController::class, 'start'])->name('wireguard.start');
 });
 
 
@@ -26,5 +28,8 @@ Route::group([
 
     Route::get('wireguard/all', [\Vpn\App\Http\Controllers\Api\User\WireguardController::class, 'listWireguardServersForUser'])->name('lists.wireguard');
     Route::resource('wireguard', \Vpn\App\Http\Controllers\Api\User\WireguardController::class)->except('edit', 'create');
+    Route::put('wireguard/{wireguard}/shutdown', [\Vpn\App\Http\Controllers\Api\User\WireguardController::class, 'shutdown'])->name('wireguard.shutdown');
+    Route::put('wireguard/{wireguard}/start', [\Vpn\App\Http\Controllers\Api\User\WireguardController::class, 'start'])->name('wireguard.start');
+
     Route::resource('peers', \Vpn\App\Http\Controllers\Api\User\PeerController::class)->only('index', 'store', 'update', 'destroy');
 });
