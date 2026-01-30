@@ -8,7 +8,9 @@
       "Vpn\\App\\": "app/",
       "Vpn\\Database\\Factories\\": "database/factories/",
       "Vpn\\Database\\Seeders\\": "database/seeders/",
-      "Vpn\\Tests\\": "tests/"
+      "Vpn\\Tests\\": "tests/",
+      "GPBMetadata\\": "GPBMetadata/",
+      "Proto\\": "Proto/"
     },
     "files": [
       "app/Helpers/helper.php"
@@ -25,7 +27,9 @@
     "elyerr/laravel-runtime": "^1.0",
     "inertiajs/inertia-laravel": "^2.0",
     "elyerr/api-response": "^1.0",
-    "laravel/framework": "^12.44"
+    "laravel/framework": "^12.44",
+    "grpc/grpc": "^1.74",
+    "google/protobuf": "^4.33"
   },
   "scripts": {
     "post-autoload-dump": [
