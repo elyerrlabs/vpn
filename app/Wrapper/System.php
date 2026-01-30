@@ -3,7 +3,7 @@
 namespace Vpn\App\Wrapper;
 
 use Grpc\ChannelCredentials;
-use Vpn\App\Models\KeyGenerator;
+//use Vpn\App\Models\KeyGenerator;
 
 /*
  * VPN - Server-side software for centralized administration and node management of a VPN service.
@@ -115,7 +115,7 @@ class System
      * Get metadata
      * @return string[][]
      */
-    public function getMetadata(): array
+    /*public function getMetadata(): array
     {
         $keyGenerator = app(KeyGenerator::class);
         $token = $keyGenerator->generateToken();
@@ -123,7 +123,7 @@ class System
         return [
             'authorization' => [$token]
         ];
-    }
+    }*/
 
     /**
      * Transform data and grpc code to http
