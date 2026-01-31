@@ -34,6 +34,56 @@ class Core extends \Vpn\App\Wrapper\System
     }
 
     /**
+     * Verify if it the port is available
+     * @param int $port
+     * @param string $host
+     * @return bool
+     */
+    protected function isWireguardPortReachable(string $host, int $port): bool
+    {
+        // TCP probe
+        $tcp = @fsockopen(
+            $host,
+            $port,
+            $errno,
+            $errstr,
+            2
+        );
+
+        if ($tcp !== false) {
+            fclose($tcp);
+            return true;
+        }
+
+        // UDP probe (best effort)
+        $udp = @stream_socket_client(
+            "udp://{$host}:{$port}",
+            $errno,
+            $errstr,
+            2
+        );
+
+        if ($udp === false) {
+            return false;
+        }
+
+        stream_set_timeout($udp, 2);
+
+        fwrite($udp, random_bytes(4));
+
+        $meta = stream_get_meta_data($udp);
+
+        fclose($udp);
+
+        /*
+         If timeout = probably reachable
+         If immediate error = unreachable
+        */
+
+        return !($meta['timed_out'] ?? false);
+    }
+
+    /**
      * Mount wireguard interface
      * @param mixed $interface_name
      * @param mixed $subnet
@@ -61,7 +111,12 @@ class Core extends \Vpn\App\Wrapper\System
         $request->setListenPort($listen_port);
         $request->setMtu($mtu);
 
-        list($response, $status) = $this->getClient()->mount($request)->wait();
+        $this->validateListenPort($listen_port);
+
+        list($response, $status) = $this->getClient()->mount(
+            $request,
+            $this->getMetadata()
+        )->wait();
 
         if ($status->code != self::OK) {
             throw new ReportError("gRPC error: " . $status->details, $status->code);
@@ -80,7 +135,10 @@ class Core extends \Vpn\App\Wrapper\System
         $request = new \Proto\Wireguard\InterfaceRequest();
         $request->setInterfaceName($interface_name);
 
-        list($response, $status) = $this->getClient()->umount($request)->wait();
+        list($response, $status) = $this->getClient()->umount(
+            $request,
+            $this->getMetadata()
+        )->wait();
 
         if ($status->code != self::OK) {
             throw new ReportError("gRPC error: " . $status->details, $status->code);
@@ -99,7 +157,10 @@ class Core extends \Vpn\App\Wrapper\System
         $request = new \Proto\Wireguard\InterfaceRequest();
         $request->setInterfaceName($interface_name);
 
-        list($response, $status) = $this->getClient()->down($request)->wait();
+        list($response, $status) = $this->getClient()->down(
+            $request,
+            $this->getMetadata()
+        )->wait();
 
         if ($status->code != self::OK) {
             throw new ReportError("gRPC error: " . $status->details, $status->code);
@@ -118,7 +179,10 @@ class Core extends \Vpn\App\Wrapper\System
         $request = new \Proto\Wireguard\InterfaceRequest();
         $request->setInterfaceName($interface_name);
 
-        list($response, $status) = $this->getClient()->up($request)->wait();
+        list($response, $status) = $this->getClient()->up(
+            $request,
+            $this->getMetadata()
+        )->wait();
 
         if ($status->code != self::OK) {
             throw new ReportError("gRPC error: " . $status->details, $status->code);
@@ -160,7 +224,10 @@ class Core extends \Vpn\App\Wrapper\System
         $request->setPresharedKey($preshared_key);
         $request->setPersistentKeepalive($persistent_keepalive);
 
-        list($response, $status) = $this->getClient()->addPeer($request)->wait();
+        list($response, $status) = $this->getClient()->addPeer(
+            $request,
+            $this->getMetadata()
+        )->wait();
 
         if ($status->code != self::OK) {
             throw new ReportError("gRPC error: " . $status->details, $status->code);
@@ -182,7 +249,8 @@ class Core extends \Vpn\App\Wrapper\System
         $request->setPublicKey($public_key);
 
         list($response, $status) = $this->getClient()->deletePeer(
-            $request
+            $request,
+            $this->getMetadata()
         )->wait();
 
         if ($status->code != self::OK) {
@@ -199,7 +267,8 @@ class Core extends \Vpn\App\Wrapper\System
     public function networkInterfaces()
     {
         list($response, $status) = $this->getClient()->interfaces(
-            new \Proto\Wireguard\EmptyRequest()
+            new \Proto\Wireguard\EmptyRequest(),
+            $this->getMetadata()
         )->wait();
 
         if ($status->code != self::OK) {

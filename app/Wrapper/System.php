@@ -3,7 +3,8 @@
 namespace Vpn\App\Wrapper;
 
 use Grpc\ChannelCredentials;
-//use Vpn\App\Models\KeyGenerator;
+use Elyerr\ApiResponse\Exceptions\ReportError;
+use Vpn\App\Services\KeysGenerator;
 
 /*
  * VPN - Server-side software for centralized administration and node management of a VPN service.
@@ -58,7 +59,7 @@ class System
     public const NOT_FOUND = 5;
     public const ALREADY_EXISTS = 6;
     public const PERMISSION_DENIED = 7;
-    public const RESOURCE_EXHAUSTED = 8 ;
+    public const RESOURCE_EXHAUSTED = 8;
     public const FAILED_PRECONDITION = 9;
     public const ABORTED = 10;
     public const OUT_OF_RANGE = 11;
@@ -98,7 +99,7 @@ class System
                 'grpc.keepalive_timeout_ms' => 5000,
                 'grpc.keepalive_time_ms' => 10000,
                 'grpc.keepalive_permit_without_calls' => 1,
-                ]
+            ]
         );
     }
 
@@ -115,15 +116,32 @@ class System
      * Get metadata
      * @return string[][]
      */
-    /*public function getMetadata(): array
+    public function getMetadata(): array
     {
-        $keyGenerator = app(KeyGenerator::class);
+        $keyGenerator = app(KeysGenerator::class);
         $token = $keyGenerator->generateToken();
 
         return [
             'authorization' => [$token]
         ];
-    }*/
+    }
+
+    /**
+     * Check the port is valid
+     * @param int $port
+     * @throws ReportError
+     * @return void
+     */
+    protected function validateListenPort(int $port): void
+    {
+        if ($port < 1024 || $port > 65535) {
+            throw new ReportError(
+                "The selected port is not valid. Please choose a port between 1024 and 65535.",
+                403
+            );
+        }
+    }
+
 
     /**
      * Transform data and grpc code to http
@@ -137,94 +155,93 @@ class System
         return match ($code) {
             self::OK => [
                 'status' => 200,
-                'message' => 'The operation was completed successfully.',
+                'message' => 'Everything went well. Your request was completed successfully.',
             ],
 
             self::CANCELLED => [
                 'status' => 499,
-                'message' => 'The request was cancelled by the client before completion.',
+                'message' => 'The operation was cancelled before it finished.',
             ],
 
             self::INVALID_ARGUMENT => [
                 'status' => 400,
-                'message' => 'One or more request parameters are invalid or malformed.',
+                'message' => 'Some of the information you sent is not valid. Please check and try again.',
             ],
 
             self::DEADLINE_EXCEEDED => [
                 'status' => 504,
-                'message' => 'The server did not respond within the expected time limit.',
+                'message' => 'The server took too long to respond. Please try again.',
             ],
 
             self::NOT_FOUND => [
                 'status' => 404,
-                'message' => 'The requested resource could not be found on the server.',
+                'message' => 'We couldn’t find what you were looking for.',
             ],
 
             self::ALREADY_EXISTS => [
                 'status' => 409,
-                'message' => 'The resource already exists and cannot be created again.',
+                'message' => 'This already exists, so it cannot be created again.',
             ],
 
             self::PERMISSION_DENIED => [
                 'status' => 403,
-                'message' => 'You do not have permission to perform this operation.',
+                'message' => 'You don’t have permission to do this.',
             ],
 
             self::UNAUTHENTICATED => [
                 'status' => 401,
-                'message' => 'Authentication is required or the provided credentials are invalid.',
+                'message' => 'Please log in again. Your session may have expired.',
             ],
 
             self::RESOURCE_EXHAUSTED => [
                 'status' => 429,
-                'message' => 'Resource limits have been exceeded. Please retry later.',
+                'message' => 'The system is busy right now. Please wait a moment and try again.',
             ],
 
             self::FAILED_PRECONDITION => [
                 'status' => 412,
-                'message' => 'The operation cannot be executed due to the current system state.',
+                'message' => 'This action can’t be completed right now because the system is not ready.',
             ],
 
             self::ABORTED => [
                 'status' => 409,
-                'message' => 'The operation was aborted, usually due to a concurrency conflict.',
+                'message' => 'The operation was stopped. Please try again.',
             ],
 
             self::OUT_OF_RANGE => [
                 'status' => 416,
-                'message' => 'The requested operation exceeds the valid range.',
+                'message' => 'One of the values is outside the allowed range.',
             ],
 
             self::UNIMPLEMENTED => [
                 'status' => 501,
-                'message' => 'This operation is not implemented or not supported by the server.',
+                'message' => 'This feature is not available yet.',
             ],
 
             self::INTERNAL => [
                 'status' => 500,
-                'message' => 'An internal server error occurred. Please try again later.',
+                'message' => 'Something went wrong on our side. Please try again later.',
             ],
 
             self::UNAVAILABLE => [
                 'status' => 503,
-                'message' => 'The service is temporarily unavailable. Please retry with backoff.',
+                'message' => 'The service is temporarily unavailable. Please try again in a few moments.',
             ],
 
             self::DATA_LOSS => [
                 'status' => 500,
-                'message' => 'Unrecoverable data loss or corruption was detected.',
+                'message' => 'A serious system error occurred. Please contact support.',
             ],
 
             self::UNKNOWN => [
                 'status' => 500,
-                'message' => 'An unknown error occurred while processing the request.',
+                'message' => 'An unexpected error occurred. Please try again.',
             ],
 
             default => [
                 'status' => 500,
-                'message' => 'Unhandled gRPC status code received from server.',
+                'message' => 'Unexpected system error.',
             ],
         };
     }
-
 }

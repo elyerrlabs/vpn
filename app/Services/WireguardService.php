@@ -9,6 +9,7 @@ use Vpn\App\Models\Wireguard;
 use Vpn\App\Contracts\Service;
 use Illuminate\Support\Facades\DB;
 use Elyerr\ApiResponse\Assets\Asset;
+use Illuminate\Database\QueryException;
 use Vpn\App\Repositories\PeerRepository;
 use Vpn\App\Repositories\WireguardRepository;
 use Elyerr\ApiResponse\Exceptions\ReportError;
@@ -215,12 +216,16 @@ final class WireguardService extends MasterService
     {
         $nets = $this->listSubnetForServer($data['server_id'], $forUser);
 
-        throw_if($nets->count(), new ReportError(__('Server can not be found'), 404));
+        throw_if(
+            $nets->count() >= 10,
+            new ReportError(__('The limit has been exceeded'), 403)
+        );
 
         $last_subnet = $nets->latest()->first();
         $network = $this->generateNextSubnet($last_subnet ? $last_subnet->subnet : null);
         $subnet = "{$network['subnet']}/{$network['prefix']}";
         $gateway = "{$network['gateway']}/{$network['prefix']}";
+
 
         //Limit to 10 subnets to create by server
         throw_if(
@@ -242,7 +247,9 @@ final class WireguardService extends MasterService
 
         $model = DB::transaction(function () use ($data, $subnet, $gateway) {
 
-            $model = $this->repository->create([
+            try {
+
+                $model = $this->repository->create([
                     'slug' => $data['slug'],
                     'subnet' => $subnet,
                     'gateway' => $gateway,
@@ -255,22 +262,27 @@ final class WireguardService extends MasterService
                     'mounted' => $data['mounted'] ?? false,
                     'public' => $data['public'] ?? false,
                     'server_id' => $data['server_id']
-                ]);
+                    ]);
 
-            $this->grpc(function () use ($model) {
 
-                $this->core($model)->mountInterface(
-                    $model->slug,
-                    $model->subnet,
-                    $model->gateway,
-                    $model->private_key,
-                    $model->network_interface,
-                    $model->listen_port,
-                    $model->mtu
-                );
-            });
+                $this->grpc(function () use ($model) {
 
-            return $model;
+                    $this->core($model)->mountInterface(
+                        $model->slug,
+                        $model->subnet,
+                        $model->gateway,
+                        $model->private_key,
+                        $model->network_interface,
+                        $model->listen_port,
+                        $model->mtu
+                    );
+                });
+
+                return $model;
+
+            } catch (QueryException $th) {
+                throw new ReportError(__('The selected port is already in use on this server'), 403);
+            }
         });
 
         return $model;
