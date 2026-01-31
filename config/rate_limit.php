@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the Elymod package.
  *
@@ -75,10 +76,10 @@ return [
     |
     */
 
-    // 'custom_name' => [
-    //     'limit'      => 100,
-    //     'block_time' => 60,
-    //     'name'       => 'Custom rate limit description',
-    // ],
+    'gateway' => [
+        'limit'      => 1000,
+        'block_time' => 60,
+        'name'       => 'Gateway rate limit',
+    ],
 
 ];
