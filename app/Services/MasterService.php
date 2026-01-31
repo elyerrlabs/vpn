@@ -59,8 +59,13 @@ class MasterService
         try {
             $fn();
         } catch (\Throwable $th) {
-            $status = Core::grpcToHttp($th->getCode());
-            throw new ReportError(__($status['message']), $status['status']);
+            if ($th->getCode() <= 16) {
+                $status = Core::grpcToHttp($th->getCode());
+                throw new ReportError(__($status['message']), $status['status']);
+
+            }
+
+            throw new ReportError(__($th->getMessage()), $th->getCode());
         }
     }
 
