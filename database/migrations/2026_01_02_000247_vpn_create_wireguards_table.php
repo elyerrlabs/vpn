@@ -31,11 +31,11 @@ return new class () extends Migration {
         Schema::create('vpn_wireguards', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('slug', 150)->index();
-            $table->string('subnet');
-            $table->string('mtu');
+            $table->string('subnet', 32);
+            $table->integer('mtu');
             $table->string('gateway');
-            $table->string('private_key');
-            $table->string('listen_port');
+            $table->text('private_key');
+            $table->integer('listen_port');
             $table->string('dns')->nullable();
             $table->boolean('dns_enabled')->default(false);
             $table->string('network_interface');
@@ -43,6 +43,9 @@ return new class () extends Migration {
             $table->boolean('public')->default(false);
             $table->uuid('server_id');
             $table->timestamps();
+
+            $table->unique(['server_id','listen_port']);
+            $table->unique(['server_id','subnet']);
 
             $table->foreign('server_id')->references('id')->on('vpn_servers')->restrictOnDelete();
 
