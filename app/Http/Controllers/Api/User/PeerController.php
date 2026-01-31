@@ -1,14 +1,10 @@
 <?php
 
 namespace Vpn\App\Http\Controllers\Api\User;
-
-use data;
-use Vpn\App\Wrapper\Core;
+ 
 use Illuminate\Http\Request;
-use Vpn\App\Services\PeerService;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\ApiController;
-use Elyerr\ApiResponse\Exceptions\ReportError;
+use Vpn\App\Services\PeerService; 
+use App\Http\Controllers\ApiController; 
 use Vpn\App\Transformers\User\PeerTransformer;
 
 /*

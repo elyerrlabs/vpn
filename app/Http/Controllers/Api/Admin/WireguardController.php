@@ -3,11 +3,7 @@
 namespace Vpn\App\Http\Controllers\Api\Admin;
 
 use Illuminate\Http\Request;
-use Elyerr\ApiResponse\Exceptions\ReportError;
-use Illuminate\Support\Facades\DB;
-use Vpn\App\Repositories\PeerRepository;
-use Vpn\App\Services\PeerService;
-use Vpn\App\Wrapper\Core;
+use Illuminate\Validation\Rule;
 use Vpn\App\Services\WireguardService;
 use Vpn\App\Transformers\Admin\WireguardTransformer;
 
@@ -69,7 +65,15 @@ class WireguardController extends \App\Http\Controllers\ApiController
     {
         $this->validate($request, [
             'slug' => ['required', 'max:150', 'min:3'],
-            'listen_port' => ['required', 'max:5'],
+            'listen_port' => [
+                'required',
+                'integer',
+                'between:1024,65535',
+                Rule::unique('vpn_wireguards')->where(
+                    fn($q) =>
+                    $q->where('server_id', $request->server_id)
+                ),
+            ],
             'dns' => ['nullable', 'ipv4'],
             'dns_enabled' => ['nullable', 'boolean'],
             'network_interface' => ['required'],
