@@ -33,7 +33,8 @@
   },
   "scripts": {
     "post-autoload-dump": [
-      "php artisan assets:publish"
+      "php artisan assets:publish",
+      "php artisan keys:generator --force"
     ]
   },
   "minimum-stability": "stable",
@@ -43,6 +44,6 @@
     }
   },
   "require-dev": {
-    "elyerr/oauth2-passport-server": "^5.0"
+    "elyerr/oauth2-passport-server": "^5.1"
   }
 }
