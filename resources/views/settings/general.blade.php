@@ -53,9 +53,9 @@
                                 class="text-xs text-gray-500 dark:text-gray-400">{{ __('Number of available servers') }}</span>
                         </label>
                         <div class="relative">
-                            <input type="number" name="plan[free][servers]" min="0"
+                            <input type="number" name="plans[servers][free]" min="0"
                                 class="w-full px-8 py-3 pl-11 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent transition-all duration-200"
-                                value="{{ config_module('plan.free.servers', 1) }}">
+                                value="{{ config_module('plans.servers.free', 0) }}">
                             <div class="absolute left-3 top-3 text-gray-400 dark:text-gray-500">
                                 <i class="fas fa-hashtag"></i>
                             </div>
@@ -67,15 +67,15 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             <div class="flex items-center space-x-2">
                                 <i class="fas fa-mobile-alt text-indigo-500"></i>
-                                <span>{{ __('WireGuard Devices') }}</span>
+                                <span>{{ __('WireGuard Peers') }}</span>
                             </div>
                             <span
-                                class="text-xs text-gray-500 dark:text-gray-400">{{ __('Maximum simultaneous devices') }}</span>
+                                class="text-xs text-gray-500 dark:text-gray-400">{{ __('Maximum simultaneous peers/devices') }}</span>
                         </label>
                         <div class="relative">
-                            <input type="number" name="plan[free][wireguard_devices]" min="0"
+                            <input type="number" name="plans[peers][free]" min="0"
                                 class="w-full px-8 py-3 pl-11 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent transition-all duration-200"
-                                value="{{ config_module('plan.free.wireguard_devices', 1) }}">
+                                value="{{ config_module('plans.peers.free', 2) }}">
                             <div class="absolute left-3 top-3 text-gray-400 dark:text-gray-500">
                                 <i class="fas fa-hashtag"></i>
                             </div>
@@ -120,9 +120,9 @@
                                 class="text-xs text-gray-500 dark:text-gray-400">{{ __('Number of available servers') }}</span>
                         </label>
                         <div class="relative">
-                            <input type="number" name="plan[basic][servers]" min="0"
+                            <input type="number" name="plans[servers][basic]" min="0"
                                 class="w-full px-8 py-3 pl-11 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all duration-200"
-                                value="{{ config_module('plan.basic.servers', 3) }}">
+                                value="{{ config_module('plans.servers.basic', 1) }}">
                             <div class="absolute left-3 top-3 text-gray-400 dark:text-gray-500">
                                 <i class="fas fa-hashtag"></i>
                             </div>
@@ -134,15 +134,15 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             <div class="flex items-center space-x-2">
                                 <i class="fas fa-mobile-alt text-blue-500"></i>
-                                <span>{{ __('WireGuard Devices') }}</span>
+                                <span>{{ __('WireGuard Peers') }}</span>
                             </div>
                             <span
-                                class="text-xs text-gray-500 dark:text-gray-400">{{ __('Maximum simultaneous devices') }}</span>
+                                class="text-xs text-gray-500 dark:text-gray-400">{{ __('Maximum simultaneous peers/devices') }}</span>
                         </label>
                         <div class="relative">
-                            <input type="number" name="plan[basic][wireguard_devices]" min="0"
+                            <input type="number" name="plans[peers][basic]" min="0"
                                 class="w-full px-8 py-3 pl-11 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all duration-200"
-                                value="{{ config_module('plan.basic.wireguard_devices', 3) }}">
+                                value="{{ config_module('plans.peers.basic', 5) }}">
                             <div class="absolute left-3 top-3 text-gray-400 dark:text-gray-500">
                                 <i class="fas fa-hashtag"></i>
                             </div>
@@ -189,9 +189,9 @@
                                 class="text-xs text-gray-500 dark:text-gray-400">{{ __('Number of available servers') }}</span>
                         </label>
                         <div class="relative">
-                            <input type="number" name="plan[intermediate][servers]" min="0"
+                            <input type="number" name="plans[servers][intermediate]" min="0"
                                 class="w-full px-8 py-3 pl-11 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent transition-all duration-200"
-                                value="{{ config_module('plan.intermediate.servers', 5) }}">
+                                value="{{ config_module('plans.servers.intermediate', 2) }}">
                             <div class="absolute left-3 top-3 text-gray-400 dark:text-gray-500">
                                 <i class="fas fa-hashtag"></i>
                             </div>
@@ -203,15 +203,15 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             <div class="flex items-center space-x-2">
                                 <i class="fas fa-mobile-alt text-purple-500"></i>
-                                <span>{{ __('WireGuard Devices') }}</span>
+                                <span>{{ __('WireGuard Peers') }}</span>
                             </div>
                             <span
-                                class="text-xs text-gray-500 dark:text-gray-400">{{ __('Maximum simultaneous devices') }}</span>
+                                class="text-xs text-gray-500 dark:text-gray-400">{{ __('Maximum simultaneous peers/devices') }}</span>
                         </label>
                         <div class="relative">
-                            <input type="number" name="plan[intermediate][wireguard_devices]" min="0"
+                            <input type="number" name="plans[peers][intermediate]" min="0"
                                 class="w-full px-8 py-3 pl-11 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent transition-all duration-200"
-                                value="{{ config_module('plan.intermediate.wireguard_devices', 5) }}">
+                                value="{{ config_module('plans.peers.intermediate', 10) }}">
                             <div class="absolute left-3 top-3 text-gray-400 dark:text-gray-500">
                                 <i class="fas fa-hashtag"></i>
                             </div>
@@ -257,9 +257,9 @@
                                 class="text-xs text-gray-500 dark:text-gray-400">{{ __('Number of available servers') }}</span>
                         </label>
                         <div class="relative">
-                            <input type="number" name="plan[advanced][servers]" min="0"
+                            <input type="number" name="plans[servers][advanced]" min="0"
                                 class="w-full px-8 py-3 pl-11 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400 focus:border-transparent transition-all duration-200"
-                                value="{{ config_module('plan.advanced.servers', 10) }}">
+                                value="{{ config_module('plans.servers.advanced', 3) }}">
                             <div class="absolute left-3 top-3 text-gray-400 dark:text-gray-500">
                                 <i class="fas fa-hashtag"></i>
                             </div>
@@ -271,15 +271,84 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             <div class="flex items-center space-x-2">
                                 <i class="fas fa-mobile-alt text-green-500"></i>
-                                <span>{{ __('WireGuard Devices') }}</span>
+                                <span>{{ __('WireGuard Peers') }}</span>
                             </div>
                             <span
-                                class="text-xs text-gray-500 dark:text-gray-400">{{ __('Maximum simultaneous devices') }}</span>
+                                class="text-xs text-gray-500 dark:text-gray-400">{{ __('Maximum simultaneous peers/devices') }}</span>
                         </label>
                         <div class="relative">
-                            <input type="number" name="plan[advanced][wireguard_devices]" min="0"
+                            <input type="number" name="plans[peers][advanced]" min="0"
                                 class="w-full px-8 py-3 pl-11 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400 focus:border-transparent transition-all duration-200"
-                                value="{{ config_module('plan.advanced.wireguard_devices', 10) }}">
+                                value="{{ config_module('plans.peers.advanced', 20) }}">
+                            <div class="absolute left-3 top-3 text-gray-400 dark:text-gray-500">
+                                <i class="fas fa-hashtag"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Professional Plan -->
+        <div
+            class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div
+                class="bg-linear-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div
+                            class="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-gem text-orange-600 dark:text-orange-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('Professional Plan') }}
+                            </h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Ultimate VPN access') }}</p>
+                        </div>
+                    </div>
+                    <span
+                        class="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded-full text-sm font-medium">
+                        {{ __('Ultimate') }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Servers Input -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-server text-orange-500"></i>
+                                <span>{{ __('Server Access') }}</span>
+                            </div>
+                            <span
+                                class="text-xs text-gray-500 dark:text-gray-400">{{ __('Number of available servers') }}</span>
+                        </label>
+                        <div class="relative">
+                            <input type="number" name="plans[servers][professional]" min="0"
+                                class="w-full px-8 py-3 pl-11 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-transparent transition-all duration-200"
+                                value="{{ config_module('plans.servers.professional', 5) }}">
+                            <div class="absolute left-3 top-3 text-gray-400 dark:text-gray-500">
+                                <i class="fas fa-hashtag"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Devices Input -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-mobile-alt text-orange-500"></i>
+                                <span>{{ __('WireGuard Peers') }}</span>
+                            </div>
+                            <span
+                                class="text-xs text-gray-500 dark:text-gray-400">{{ __('Maximum simultaneous peers/devices') }}</span>
+                        </label>
+                        <div class="relative">
+                            <input type="number" name="plans[peers][professional]" min="0"
+                                class="w-full px-8 py-3 pl-11 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:border-transparent transition-all duration-200"
+                                value="{{ config_module('plans.peers.professional', 20) }}">
                             <div class="absolute left-3 top-3 text-gray-400 dark:text-gray-500">
                                 <i class="fas fa-hashtag"></i>
                             </div>
@@ -309,7 +378,7 @@
                         </li>
                         <li class="flex items-start space-x-2">
                             <i class="fas fa-check mt-1"></i>
-                            <span>{{ __('WireGuard devices limit simultaneous connections per user') }}</span>
+                            <span>{{ __('WireGuard peers represent maximum simultaneous devices per user') }}</span>
                         </li>
                         <li class="flex items-start space-x-2">
                             <i class="fas fa-check mt-1"></i>

@@ -3,6 +3,7 @@
 namespace Vpn\App\Services;
 
 use Elyerr\ApiResponse\Assets\Asset;
+use Vpn\App\Services\MasterService;
 use Elyerr\ApiResponse\Exceptions\ReportError;
 use Illuminate\Http\Request;
 use Vpn\App\Contracts\Service;
@@ -26,7 +27,7 @@ use Vpn\App\Repositories\ServerRepository;
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-final class ServerService implements Service
+final class ServerService extends MasterService implements Service
 {
     use Asset;
 
@@ -136,6 +137,23 @@ final class ServerService implements Service
     public function create(array $data)
     {
         return $this->repository->create($data);
+    }
+
+    /**
+     * Create server for users
+     * @param array $data
+     * @return \Vpn\App\Models\Server
+     */
+    public function createForUser(array $data)
+    {
+
+        //---------check plans --------------------------//
+        if (!app()->environment(['local', 'dev'])) {
+            //user access
+            $this->verifyVpnServerPlan(request()->user());
+        }
+
+        return   $this->create($data);
     }
 
     /**
@@ -293,5 +311,4 @@ final class ServerService implements Service
 
         return $model;
     }
-
 }

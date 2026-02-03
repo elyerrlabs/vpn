@@ -52,35 +52,35 @@ final class PeerService extends MasterService implements Service
         return $this->repository->query()
             ->when(
                 $request->filled('name'),
-                fn ($q) =>
+                fn($q) =>
                 $q->where('name', 'like', '%' . $request->name . '%')
             )
             ->when(
                 $request->filled('wireguard_id'),
-                fn ($q) =>
+                fn($q) =>
                 $q->where('wireguard_id', $request->wireguard_id)
             )
             ->when(
                 $request->filled('mounted'),
-                fn ($q) =>
+                fn($q) =>
                 $q->where('mounted', $request->mounted)
             )
             ->when(
                 $request->filled('stand_by'),
-                fn ($q) =>
+                fn($q) =>
                 $q->where('stand_by', $request->stand_by)
             )
             ->when(
                 $request->filled('user_id'),
-                fn ($q) =>
+                fn($q) =>
                 $q->where('user_id', $request->user_id)
             )
             ->when(
                 $request->filled('server_id'),
-                fn ($q) =>
+                fn($q) =>
                 $q->whereHas(
                     'wireguard.server',
-                    fn ($s) =>
+                    fn($s) =>
                     $s->where('id', $request->server_id)
                 )
             );
@@ -129,14 +129,14 @@ final class PeerService extends MasterService implements Service
             //---------check plans --------------------------//
             if (!app()->environment(['local', 'dev'])) {
                 //user access
-                $this->verifyPlan($user);
+                $this->verifyVpnPlan($user);
             }
 
             //Retrieve Wireguard server
             $wireguard_server = app(WireguardRepository::class)
-            ->query()
-            ->where('id', $data['wireguard_id'])
-            ->first();
+                ->query()
+                ->where('id', $data['wireguard_id'])
+                ->first();
 
             //Generate pair keys to the client
             $keys = $this->generatePairKeys();
@@ -158,7 +158,7 @@ final class PeerService extends MasterService implements Service
                 'user_id' => $user->id,
                 'wireguard_id' => $wireguard_server->id,
                 'mounted' => true
-                ]);
+            ]);
 
             // Mount peer
             $this->core($model->wireguard)->addPeer(
@@ -174,7 +174,7 @@ final class PeerService extends MasterService implements Service
 
             /**
              * Create peer configuration
-            */
+             */
             $config[] = "[Interface]";
             $config[] = "PrivateKey = {$keys['private_key']}";
             $config[] = "MTU = {$model->wireguard->mtu}";
@@ -182,7 +182,7 @@ final class PeerService extends MasterService implements Service
              * Note: The 'ListenPort' directive has been commented out because it is not supported on some platforms.
              * Certain systems do not allow explicitly setting this parameter in the WireGuard configuration.
              * Therefore, it is omitted to ensure broader compatibility.
-            */
+             */
             // $config[] = "ListenPort = {$wireguard_server->listen_port}";
 
             $config[] = "Address =  {$ip_allowed}/32";
@@ -251,7 +251,6 @@ final class PeerService extends MasterService implements Service
             );
 
             $model->delete();
-
         });
 
         return $model;

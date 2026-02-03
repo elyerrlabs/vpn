@@ -1,4 +1,5 @@
 <?php
+
 namespace Vpn\App\Http\Controllers\Api\User;
 
 use Illuminate\Http\Request;
@@ -27,7 +28,6 @@ use Vpn\App\Transformers\User\UserServerTransformer;
 
 class ServerController extends ApiController
 {
-
     /**
      * Repository
      * @var ServerService
@@ -42,7 +42,7 @@ class ServerController extends ApiController
     {
         parent::__construct();
         $this->service = $serverService;
-        $this->middleware('scope:commerce:administrator:vpn:full,vpn:advanced,commerce:vpn:intermediate,commerce:vpn:basic');
+        $this->middleware('scope:administrator:vpn:full,commerce:vpn-servers:professional,commerce:vpn-servers:advanced,commerce:vpn-servers:intermediate,commerce:vpn-servers:basic')->except('listServers');
     }
 
     /**
@@ -85,7 +85,7 @@ class ServerController extends ApiController
             'proxy_port' => ['nullable', 'max:6'],
         ]);
 
-        $data = $this->service->create([
+        $data = $this->service->createForUser([
             'name' => $request->name,
             'ip' => $request->ip,
             'url' => $request->url ?? null,

@@ -7,6 +7,7 @@ use Vpn\App\Models\Wireguard;
 use App\Repositories\Traits\Scopes;
 use Vpn\App\Repositories\PeerRepository;
 use Elyerr\ApiResponse\Exceptions\ReportError;
+use Vpn\App\Repositories\ServerRepository;
 
 /*
  * VPN - Server-side software for centralized administration and node management of a VPN service.
@@ -34,16 +35,31 @@ class MasterService
      * Plans
      * @var array
      */
-    protected $plans;
+    protected $plans_vpn;
+
+    /**
+     * Plans vpn servers
+     * @var array
+     */
+    protected $plans_vpn_servers;
 
 
     public function __construct()
     {
-        $this->plans = [
-            'commerce:vpn:advanced' => config_module('advanced.peers', 20),
-            'commerce:vpn:intermediate' => config_module('intermediate.peers', 10),
-            'commerce:vpn:basic' => config_module('basic.peers', 5),
-            'commerce:vpn:free' => config_module('free.peers', 2),
+        $this->plans_vpn = [
+            'commerce:vpn:professional' => config_module('plans.peers.professional', 20),
+            'commerce:vpn:advanced' => config_module('plans.peers.advanced', 20),
+            'commerce:vpn:intermediate' => config_module('plans.peers.intermediate', 10),
+            'commerce:vpn:basic' => config_module('plans.peers.basic', 5),
+            'commerce:vpn:free' => config_module('plans.peers.free', 2),
+        ];
+
+        $this->plans_vpn_servers = [
+            'commerce:vpn-servers:professional' => config_module('plans.servers.professional', 5),
+            'commerce:vpn-servers:advanced' => config_module('plans.servers.advanced', 3),
+            'commerce:vpn-servers:intermediate' => config_module('plans.servers.intermediate', 2),
+            'commerce:vpn-servers:basic' => config_module('plans.servers.basic', 1),
+            'commerce:vpn:free' => config_module('plans.servers.free', 0),
         ];
     }
 
@@ -62,7 +78,6 @@ class MasterService
             if ($th->getCode() <= 16) {
                 $status = Core::grpcToHttp($th->getCode());
                 throw new ReportError(__($status['message']), $status['status']);
-
             }
 
             throw new ReportError(__($th->getMessage()), $th->getCode());
@@ -187,28 +202,50 @@ class MasterService
      * @param mixed $user
      * @return void
      */
-    public function verifyPlan($user)
+    public function verifyVpnPlan($user)
     {
         //Retrieve the all vpn device (Wireguard protocol)
         $wireguard = app(PeerRepository::class)
             ->query()
             ->where('user_id', $user->id);
 
-        $access = collect($this->scopes(true, false))->pluck('id');
+        $access = collect($this->scopes(true, true))->pluck('id');
 
         //check user plan
-        $userLimit = collect($this->plans)
-            ->filter(fn ($limit, $plan) => $access->contains($plan))
-            ->first() ?? config('third-party.vpn.free');
+        $userLimit = collect($this->plans_vpn)
+            ->filter(fn($limit, $plan) => $access->contains($plan))
+            ->first() ?? config_module('plans.peers.free', 2);
 
         throw_if(
             $wireguard->count() >= $userLimit,
+            new ReportError(
+                __('You have exceeded the server limit. To add more servers, please upgrade to a higher plan.'),
+                403
+            )
+        );
+    }
+
+    public function verifyVpnServerPlan($user)
+    {
+        //Retrieve the all vpn device (Wireguard protocol)
+        $servers = app(ServerRepository::class)->query()->where('user_id', $user->id);
+
+        $access = collect($this->scopes(true, true))->pluck('id');
+
+        //check user plan
+        $userLimit = collect($this->plans_vpn_servers)
+            ->filter(fn($limit, $plan) => $access->contains($plan))
+            ->first() ?? config_module('plans.servers.free', 0);
+
+        throw_if(
+            $servers->count() >= $userLimit,
             new ReportError(
                 __('You have exceeded the device limit. To add more devices, please upgrade to a higher plan.'),
                 403
             )
         );
     }
+
 
 
     /**
@@ -290,8 +327,8 @@ class MasterService
         $access = collect($this->scopes(true, false))->pluck('id');
 
         //check user plan
-        $amount = collect($this->plans)
-            ->filter(fn ($limit, $plan) => $access->contains($plan))
+        $amount = collect($this->plans_vpn)
+            ->filter(fn($limit, $plan) => $access->contains($plan))
             ->first() ?? config('vpn.free');
 
 

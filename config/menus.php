@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the Vpn package.
  *
@@ -87,7 +88,7 @@ return [
                 'name' => 'VNP Servers',
                 'route' => 'module.vpn.admin.servers',
                 'icon' => 'mdi-store-cog',
-                'service' => 'administrator:vpn',
+                'service' => 'commerce:vpn-servers',
             ],
 
             'vpn_wireguard_servers' => [
@@ -95,7 +96,7 @@ return [
                 'name' => 'VNP Wireguard Servers',
                 'route' => 'module.vpn.admin.wireguard',
                 'icon' => 'mdi-store-cog',
-                'service' => 'administrator:vpn',
+                'service' => 'commerce:vpn-servers',
             ],
         ],
 
@@ -117,9 +118,7 @@ return [
                 'icon'    => 'mdi-cog',
                 'service' => 'user:settings',
             ],
-            */
-
-        ],
+            */],
 
 
         'admin_settings' => [
@@ -159,8 +158,7 @@ return [
             'service' => true,
             'position' => 8,
         ],
-        */
-    ],
+        */],
 
     'vpn_admin_routes' => [
         [
@@ -197,7 +195,7 @@ return [
             'name' => 'Servers',
             'route' => 'module.vpn.web.users.servers',
             'icon' => 'mdi-store-cog',
-            'service' => true,
+            'service' => 'commerce:vpn-servers',
             'position' => 1,
         ],
 
@@ -206,15 +204,15 @@ return [
             'name' => 'Wireguard',
             'route' => 'module.vpn.web.users.wireguard',
             'icon' => 'mdi-store-cog',
-            'service' => true,
-            'position' => 1,
+            'service' => 'commerce:vpn-servers',
+            'position' => 2,
         ],
         [
             'id' => 'peers',
             'name' => 'Wireguard Generator',
             'route' => 'module.vpn.web.users.peers',
             'icon' => 'mdi-store-cog',
-            'service' => true,
+            'position' => 3,
         ],
     ]
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Vpn\App\Http\Controllers\Web;
 
 use Inertia\Inertia;
@@ -6,11 +7,10 @@ use App\Http\Controllers\WebController;
 
 final class UserController extends WebController
 {
-
     public function __construct()
     {
         parent::__construct();
-        $this->middleware('scope:administrator:vpn:full,commerce:vpn:advanced,commerce:vpn:intermediate,commerce:vpn:basic');
+        $this->middleware('scope:administrator:vpn:full,commerce:vpn-servers:professional,commerce:vpn-servers:advanced,commerce:vpn-servers:intermediate,commerce:vpn-servers:basic')->except('peers');
     }
 
     /**

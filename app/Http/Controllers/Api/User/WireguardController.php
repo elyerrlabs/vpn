@@ -1,11 +1,11 @@
 <?php
 
 namespace Vpn\App\Http\Controllers\Api\User;
- 
+
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule; 
+use Illuminate\Validation\Rule;
 use Vpn\App\Services\WireguardService;
-use App\Http\Controllers\ApiController; 
+use App\Http\Controllers\ApiController;
 use Vpn\App\Transformers\User\WireguardTransformer;
 use Vpn\App\Transformers\User\UserWireguardTransformer;
 
@@ -43,7 +43,7 @@ class WireguardController extends ApiController
     {
         parent::__construct();
         $this->service = $wireguardService;
-        $this->middleware('scope:administrator:vpn:full,commerce:vpn:advanced,commerce:vpn:intermediate,commerce:vpn:basic');
+        $this->middleware('scope:administrator:vpn:full,commerce:vpn-servers:professional,commerce:vpn-servers:advanced,commerce:vpn-servers:intermediate,commerce:vpn-servers:basic')->except('listWireguardServersForUser');
     }
 
     /**
@@ -83,7 +83,7 @@ class WireguardController extends ApiController
                 'integer',
                 'between:1024,65535',
                 Rule::unique('vpn_wireguards')->where(
-                    fn($q) =>
+                    fn ($q) =>
                     $q->where('server_id', $request->server_id)
                 ),
             ],
