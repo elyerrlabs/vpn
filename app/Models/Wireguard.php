@@ -33,6 +33,7 @@ class Wireguard extends Master
     public $table = "vpn_wireguards";
 
     protected $fillable = [
+        'name',
         'slug',
         'subnet',
         'gateway',

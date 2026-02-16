@@ -64,7 +64,7 @@ class WireguardController extends \App\Http\Controllers\ApiController
     public function store(Request $request)
     {
         $this->validate($request, [
-            'slug' => ['required', 'max:150', 'min:3'],
+            'name' => ['required', 'max:150', 'min:3'],
             'listen_port' => [
                 'required',
                 'integer',

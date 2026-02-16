@@ -61,6 +61,27 @@ final class WireguardRepository implements Repository
     }
 
     /**
+     * Summary of update
+     * @param string $id
+     * @param array $data
+     * @return Wireguard
+     */
+    public function update(string $id, array $data)
+    {
+        $model = $this->find($id);
+
+        $model->update($data);
+
+        return $model;
+    }
+
+     /**
+     * Delete resource
+     * @param string $id
+     * @return Wireguard
+     */
+
+    /**
      * Find resource
      * @param string $id
      * @param array $data

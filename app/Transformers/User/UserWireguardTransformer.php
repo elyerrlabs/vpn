@@ -54,6 +54,7 @@ class UserWireguardTransformer extends TransformerAbstract
     {
         return [
             'id' => $wireguard->id,
+            'name' => $wireguard->name,
             'slug' => $wireguard->slug,
             'subnet' => $wireguard->subnet,
             'gateway' => $wireguard->gateway,

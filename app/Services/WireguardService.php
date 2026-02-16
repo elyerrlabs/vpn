@@ -62,7 +62,7 @@ final class WireguardService extends MasterService
 
                 $query->when(
                     $request->filled('internal'),
-                    fn ($q) => $q->where('internal', $request->internal)
+                    fn($q) => $q->where('internal', $request->internal)
                 );
 
                 $query->where('hidden', false);
@@ -74,17 +74,17 @@ final class WireguardService extends MasterService
 
         $query->when(
             $request->filled('slug'),
-            fn ($q) =>  $q->whereRaw('lower(slug) like ?', ['%' . strtolower('slug') . '%'])
+            fn($q) =>  $q->whereRaw('lower(slug) like ?', ['%' . strtolower('slug') . '%'])
         );
 
         $query->when(
             $request->filled('server_id'),
-            fn ($q) => $q->where('server_id', $request->server_id)
+            fn($q) => $q->where('server_id', $request->server_id)
         );
 
         $query->when(
             $request->filled('public'),
-            fn ($q) => $q->orWhere('public', "=", $request->public)
+            fn($q) => $q->orWhere('public', "=", $request->public)
         );
 
         return $query;
@@ -98,52 +98,56 @@ final class WireguardService extends MasterService
     public function search(Request $request)
     {
         $query = $this->repository->query()
-         ->whereHas(
-             'server',
-             function ($query) use ($request) {
+            ->whereHas(
+                'server',
+                function ($query) use ($request) {
 
-                 $query->when(
-                     $request->filled('internal'),
-                     fn ($q) =>
-                         $q->where('internal', $request->internal)
-                 );
+                    $query->when(
+                        $request->filled('internal'),
+                        fn($q) =>
+                        $q->where('internal', $request->internal)
+                    );
 
-                 $query->when(
-                     $request->filled('hidden'),
-                     fn ($q) =>
-                     $q->where('hidden', $request->hidden)
-                 );
-
-             }
-         )
-         ->when(
-             $request->filled('slug'),
-             fn ($q) =>
-        $q->whereRaw('LOWER(slug) LIKE ?', ['%' . strtolower($request->slug) . '%'])
-         )
-         ->when(
-             $request->filled('server_id'),
-             fn ($q) =>
-             $q->where('server_id', $request->server_id)
-         )
-          ->when(
-              $request->filled('mounted'),
-              fn ($q) =>
-             $q->where('mounted', $request->mounted)
-          )
-          ->when(
-              $request->filled('public'),
-              fn ($q) =>
-             $q->where('public', $request->public)
-          )
-          ->when(
-              $request->filled('user_id'),
-              fn ($q) =>
-             $q->whereHas(
-                 'server.user',
-                 fn ($sub) => $sub->where('id', $request->user_id)
-             )
-          );
+                    $query->when(
+                        $request->filled('hidden'),
+                        fn($q) =>
+                        $q->where('hidden', $request->hidden)
+                    );
+                }
+            )
+            ->when(
+                $request->filled('name'),
+                fn($q) =>
+                $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($request->name) . '%'])
+            )
+            ->when(
+                $request->filled('slug'),
+                fn($q) =>
+                $q->whereRaw('LOWER(slug) LIKE ?', ['%' . strtolower($request->slug) . '%'])
+            )
+            ->when(
+                $request->filled('server_id'),
+                fn($q) =>
+                $q->where('server_id', $request->server_id)
+            )
+            ->when(
+                $request->filled('mounted'),
+                fn($q) =>
+                $q->where('mounted', $request->mounted)
+            )
+            ->when(
+                $request->filled('public'),
+                fn($q) =>
+                $q->where('public', $request->public)
+            )
+            ->when(
+                $request->filled('user_id'),
+                fn($q) =>
+                $q->whereHas(
+                    'server.user',
+                    fn($sub) => $sub->where('id', $request->user_id)
+                )
+            );
         return $query;
     }
 
@@ -156,33 +160,38 @@ final class WireguardService extends MasterService
     {
         $query = $this->repository->query()
 
-         ->whereHas(
-             'server.user',
-             function ($query) use ($request) {
-                 $query->where('user_id', '=', $request->user()->id);
-             }
-         )
+            ->whereHas(
+                'server.user',
+                function ($query) use ($request) {
+                    $query->where('user_id', '=', $request->user()->id);
+                }
+            )
             ->when(
                 $request->filled('slug'),
-                fn ($q) =>
+                fn($q) =>
                 $q->whereRaw('LOWER(slug) LIKE ?', ['%' . strtolower($request->slug) . '%'])
+            )
+            ->when(
+                $request->filled('name'),
+                fn($q) =>
+                $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($request->name) . '%'])
             )
 
             ->when(
                 $request->filled('server_id'),
-                fn ($q) =>
+                fn($q) =>
                 $q->where('server_id', $request->server_id)
             )
 
             ->when(
                 $request->filled('mounted'),
-                fn ($q) =>
+                fn($q) =>
                 $q->where('mounted', $request->mounted)
             )
 
             ->when(
                 $request->filled('public'),
-                fn ($q) =>
+                fn($q) =>
                 $q->where('public', $request->public)
             );
 
@@ -198,12 +207,12 @@ final class WireguardService extends MasterService
     public function details(string $id, bool $forUser = false)
     {
         return $this->repository->query()->where('id', $id)
-         ->when($forUser, fn ($q) =>
-         $q->whereHas(
-             'server',
-             fn ($sub) =>
-                 $sub->where('user_id', request()->user()->id)
-         ))->first();
+            ->when($forUser, fn($q) =>
+            $q->whereHas(
+                'server',
+                fn($sub) =>
+                $sub->where('user_id', request()->user()->id)
+            ))->first();
     }
 
     /**
@@ -235,7 +244,7 @@ final class WireguardService extends MasterService
 
         // Filter by slug and server
         $exists = $this->repository->findBySlug(
-            Str::slug($data['slug']),
+            Str::slug($data['name']),
             $data['server_id']
         );
 
@@ -250,7 +259,8 @@ final class WireguardService extends MasterService
             try {
 
                 $model = $this->repository->create([
-                    'slug' => $data['slug'],
+                    'name' => $data['name'],
+                    'slug' => Str::slug($data['name']),
                     'subnet' => $subnet,
                     'gateway' => $gateway,
                     'private_key' => $this->generatePrivKey(),
@@ -262,7 +272,7 @@ final class WireguardService extends MasterService
                     'mounted' => $data['mounted'] ?? false,
                     'public' => $data['public'] ?? false,
                     'server_id' => $data['server_id']
-                    ]);
+                ]);
 
 
                 $this->grpc(function () use ($model) {
@@ -279,7 +289,6 @@ final class WireguardService extends MasterService
                 });
 
                 return $model;
-
             } catch (QueryException $th) {
                 throw new ReportError(__('The selected port is already in use on this server'), 403);
             }
@@ -304,7 +313,7 @@ final class WireguardService extends MasterService
             function ($query) use ($server_id, $forUser) {
                 $query->where('id', $server_id);
                 // Only for users
-                $query->when($forUser, fn ($q) => $q->where('user_id', request()->user()->id));
+                $query->when($forUser, fn($q) => $q->where('user_id', request()->user()->id));
             }
         );
 
@@ -321,15 +330,15 @@ final class WireguardService extends MasterService
     public function update(string $id, array $data, bool $forUser = false)
     {
         $model = $this->repository->query()->where('id', $id)
-        ->when(
-            $forUser,
-            fn ($q) =>
-            $q->whereHas(
-                'server',
-                fn ($subq) =>
-                $subq->where('user_id', request()->user()->id)
-            )
-        ) ->first();
+            ->when(
+                $forUser,
+                fn($q) =>
+                $q->whereHas(
+                    'server',
+                    fn($subq) =>
+                    $subq->where('user_id', request()->user()->id)
+                )
+            )->first();
 
         throw_if(
             !$forUser &&  !$model->server->internal,
@@ -358,13 +367,13 @@ final class WireguardService extends MasterService
     public function delete(string $id, bool $forUser = false)
     {
         $model = $this->repository->query()->where('id', $id)
-        ->when(
-            $forUser,
-            fn ($q) =>  $q->whereHas(
-                'server',
-                fn ($sub) => $sub->where('user_id', request()->user()->id)
-            )
-        )->first();
+            ->when(
+                $forUser,
+                fn($q) =>  $q->whereHas(
+                    'server',
+                    fn($sub) => $sub->where('user_id', request()->user()->id)
+                )
+            )->first();
 
         if (empty($model)) {
             throw new ReportError(__('Server can not be found'), 404);
@@ -404,10 +413,10 @@ final class WireguardService extends MasterService
     public function shutdown(string $id, bool $forUser = false)
     {
         $model = $this->repository->query()->where('id', $id)
-        ->when($forUser, fn ($q) => $q->whereHas(
-            'server',
-            fn ($sub) =>  $sub->where('user_id', request()->user()->id)
-        ))->first();
+            ->when($forUser, fn($q) => $q->whereHas(
+                'server',
+                fn($sub) =>  $sub->where('user_id', request()->user()->id)
+            ))->first();
 
         throw_if(empty($model), new ReportError(__('The WireGuard server can not be found'), 404));
 
@@ -420,15 +429,13 @@ final class WireguardService extends MasterService
                     $this->core($model)->shutdownInterface($model->slug);
                 });
 
-
                 // updated peer status
                 app(PeerRepository::class)->query()
-                ->where('wireguard_id', $model->id)
-                ->update(['mounted' => false, 'stand_by' => true]);
+                    ->where('wireguard_id', $model->id)
+                    ->update(['mounted' => false, 'stand_by' => true]);
 
-                $this->update($model->id, ['mounted' => false]);
+                $this->repository->update($model->id,    ['mounted' => false]);
             });
-
         }
     }
 
@@ -441,15 +448,15 @@ final class WireguardService extends MasterService
     public function start(string $id, bool $forUser = false)
     {
         $model = $this->repository->query()->where('id', $id)
-        ->when(
-            $forUser,
-            fn ($q) =>
-            $q->whereHas(
-                'server',
-                fn ($sub) =>
-                $sub->where('user_id', request()->user()->id)
-            )
-        )->first();
+            ->when(
+                $forUser,
+                fn($q) =>
+                $q->whereHas(
+                    'server',
+                    fn($sub) =>
+                    $sub->where('user_id', request()->user()->id)
+                )
+            )->first();
 
         throw_if(empty($model), new ReportError(__('The WireGuard server can not be found'), 404));
 
@@ -464,10 +471,10 @@ final class WireguardService extends MasterService
                 });
 
                 app(PeerRepository::class)->query()
-                   ->where('wireguard_id', $model->id)
-                   ->update(['mounted' => true, 'stand_by' => false]);
+                    ->where('wireguard_id', $model->id)
+                    ->update(['mounted' => true, 'stand_by' => false]);
 
-                $this->update($model->id, ['mounted' => true]);
+                $this->repository->update($model->id,    ['mounted' => true]);
             });
         }
     }
