@@ -1,0 +1,132 @@
+[
+  {
+    "name": "administrator",
+    "description": "Administrators who have full access to the system and can manage users, settings, and overall functionality.",
+    "services": [
+      {
+        "name": "vpn",
+        "description": "Service to manage and configure VPN access and connections",
+        "actions": [
+          {
+            "name": "full",
+            "public": 0,
+            "active": 1,
+            "api_key": 1,
+            "web": 0
+          },
+          {
+            "name": "view",
+            "public": 0,
+            "active": 1,
+            "api_key": 1,
+            "web": 0
+          },
+          {
+            "name": "create",
+            "public": 0,
+            "active": 1,
+            "api_key": 1,
+            "web": 0
+          },
+          {
+            "name": "update",
+            "public": 0,
+            "active": 1,
+            "api_key": 1,
+            "web": 0
+          },
+          {
+            "name": "show",
+            "public": 0,
+            "active": 1,
+            "api_key": 1,
+            "web": 0
+          },
+          {
+            "name": "destroy",
+            "public": 0,
+            "active": 1,
+            "api_key": 1,
+            "web": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "commerce",
+    "description": "Collection of paid services including cloud computing, VPN, and other premium infrastructure solutions.",
+    "services": [
+      {
+        "name": "vpn",
+        "description": "Service to manage, configure, and process payments for VPN access and subscriptions",
+        "visibility": "public",
+        "actions": [
+          {
+            "name": "basic",
+            "public": 0,
+            "active": 1,
+            "api_key": 1,
+            "web": 0
+          },
+          {
+            "name": "intermediate",
+            "public": 0,
+            "active": 1,
+            "api_key": 1,
+            "web": 0
+          },
+          {
+            "name": "advanced",
+            "public": 0,
+            "active": 1,
+            "api_key": 1,
+            "web": 0
+          },
+          {
+            "name": "professional",
+            "public": 0,
+            "active": 1,
+            "api_key": 1,
+            "web": 0
+          }
+        ]
+      },
+      {
+        "name": "VPN Servers",
+        "description": "Service to manage, configure, and orchestrate VPN server nodes across multiple environments",
+        "visibility": "public",
+        "actions": [
+          {
+            "name": "basic",
+            "public": 0,
+            "active": 1,
+            "api_key": 1,
+            "web": 0
+          },
+          {
+            "name": "intermediate",
+            "public": 0,
+            "active": 1,
+            "api_key": 1,
+            "web": 0
+          },
+          {
+            "name": "advanced",
+            "public": 0,
+            "active": 1,
+            "api_key": 1,
+            "web": 0
+          },
+          {
+            "name": "professional",
+            "public": 0,
+            "active": 1,
+            "api_key": 1,
+            "web": 0
+          }
+        ]
+      }
+    ]
+  }
+]

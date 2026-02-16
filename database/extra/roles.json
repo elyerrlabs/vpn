@@ -1,0 +1,18 @@
+[
+  {
+    "name": "basic",
+    "description": "Provides access to essential features for individual users."
+  },
+  {
+    "name": "intermediate",
+    "description": "Includes additional features and support for growing needs."
+  },
+  {
+    "name": "advanced",
+    "description": "Unlocks all premium features with full access and support."
+  },
+  {
+    "name": "professional",
+    "description": "Unlocks full premium  and new features with full access and support."
+  }
+]
