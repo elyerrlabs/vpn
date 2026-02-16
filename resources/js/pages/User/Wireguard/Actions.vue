@@ -7,7 +7,7 @@
       {{ __("Manage") }}
     </button>
 
-    <v-modal v-model="dialog" :label="__('Make operations')">
+    <v-modal v-model="dialog" :title="__('Make operations')">
       <template #body>
         <div class="p-4">
           <div class="mb-4">

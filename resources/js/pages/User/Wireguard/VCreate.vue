@@ -11,9 +11,9 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <v-input
             :label="__('Server name')"
-            v-model="form.slug"
+            v-model="form.name"
             required
-            :error="errors.slug"
+            :error="errors.name"
           />
 
           <v-input
@@ -151,13 +151,13 @@ const interfaces = ref([
 ]);
 
 const search_server = ref({
-  slug: "",
+  name: "",
   per_page: 50,
   hidden: false,
 });
 
 const toggle = async () => {
-  form.value.slug = "";
+  form.value.name = "";
   form.value.listen_port = "";
   form.value.dns = "";
   form.value.dns_enabled = false;
