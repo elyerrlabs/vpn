@@ -59,7 +59,7 @@ class MasterService
             'commerce:vpn-servers:advanced' => config_module('plans.servers.advanced', 3),
             'commerce:vpn-servers:intermediate' => config_module('plans.servers.intermediate', 2),
             'commerce:vpn-servers:basic' => config_module('plans.servers.basic', 1),
-            'commerce:vpn:free' => config_module('plans.servers.free', 0),
+            'commerce:vpn-servers:free' => config_module('plans.servers.free', 0),
         ];
     }
 
@@ -213,7 +213,7 @@ class MasterService
 
         //check user plan
         $userLimit = collect($this->plans_vpn)
-            ->filter(fn($limit, $plan) => $access->contains($plan))
+            ->filter(fn ($limit, $plan) => $access->contains($plan))
             ->first() ?? config_module('plans.peers.free', 2);
 
         throw_if(
@@ -234,9 +234,9 @@ class MasterService
 
         //check user plan
         $userLimit = collect($this->plans_vpn_servers)
-            ->filter(fn($limit, $plan) => $access->contains($plan))
+            ->filter(fn ($limit, $plan) => $access->contains($plan))
             ->first() ?? config_module('plans.servers.free', 0);
-
+         
         throw_if(
             $servers->count() >= $userLimit,
             new ReportError(
@@ -328,7 +328,7 @@ class MasterService
 
         //check user plan
         $amount = collect($this->plans_vpn)
-            ->filter(fn($limit, $plan) => $access->contains($plan))
+            ->filter(fn ($limit, $plan) => $access->contains($plan))
             ->first() ?? config('vpn.free');
 
 
