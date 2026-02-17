@@ -1,10 +1,10 @@
 <?php
 
 namespace Vpn\App\Http\Controllers\Api\User;
- 
+
 use Illuminate\Http\Request;
-use Vpn\App\Services\PeerService; 
-use App\Http\Controllers\ApiController; 
+use Vpn\App\Services\PeerService;
+use App\Http\Controllers\ApiController;
 use Vpn\App\Transformers\User\PeerTransformer;
 
 /*
@@ -50,6 +50,8 @@ class PeerController extends ApiController
      */
     public function index(Request $request)
     {
+        $request->merge(['user_id' => $this->user()->id]);
+
         $data = $this->service->search($request);
 
         return $this->showAllByBuilder($data, PeerTransformer::class);
