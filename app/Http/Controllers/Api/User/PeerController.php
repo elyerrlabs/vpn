@@ -50,7 +50,7 @@ class PeerController extends ApiController
      */
     public function index(Request $request)
     {
-        $request->merge(['user_id' => $this->user()->id]);
+        $request->merge(['user_id' => request()->user()->id]);
 
         $data = $this->service->search($request);
 
