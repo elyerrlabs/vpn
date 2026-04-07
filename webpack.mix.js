@@ -19,4 +19,4 @@ mix.js('resources/js/app.js', 'js/app.js').version()
     .postCss('resources/css/app.css', 'css/app.css', [
         require('@tailwindcss/postcss'),
         require("autoprefixer"),
-    ]);
+    ]).version();
