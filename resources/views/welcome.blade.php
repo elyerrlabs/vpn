@@ -10,7 +10,6 @@
     <meta name="keywords"
         content="{{ __('VPN, WireGuard, Proxy, SOCKS5, secure connection, privacy, encryption, anonymous browsing') }}">
     <meta name="author" content="ElyerrLabs">
-    <meta name="robots" content="index, follow">
 
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website">
@@ -87,7 +86,7 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Custom CSS -->
-    <link nonce="{{ $nonce }}" href="{{ asset('third-party/vpn/css/app.css') }}" rel="stylesheet">
+    <link nonce="{{ $nonce }}" href="{{ module_mix('css/app.css') }}" rel="stylesheet">
 
     <!-- Additional CSS for animations and modern features -->
     <style nonce="{{ $nonce }}">

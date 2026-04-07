@@ -8,14 +8,14 @@
 
     <link rel="icon" href="{{ asset('third-party/vpn/favicon.png') }}" type="image/png">
 
-    <link nonce={{ $nonce }} href="{{ asset('third-party/vpn/css/app.css') }}" rel="stylesheet">
+    <link nonce={{ $nonce }} href="{{ module_mix('css/app.css') }}" rel="stylesheet">
 
     <x-vpn-translator />
     @inertiaHead
 </head>
 <body>
     @inertia
-    <script nonce={{ $nonce }} src="{{ asset('third-party/vpn/js/app.js') }}"></script>
+    <script nonce={{ $nonce }} src="{{ module_mix('js/app.js') }}"></script>
 </body>
 
 </html>
