@@ -94,7 +94,7 @@ return [
             'vpn_wireguard_servers' => [
                 'id' => 'servers',
                 'name' => 'VNP Wireguard Servers',
-                'route' => 'module.vpn.admin.wireguard',
+                'route' => 'module.vpn.web.users.servers',
                 'icon' => 'mdi-store-cog',
                 'service' => 'commerce:vpn-servers',
             ],
