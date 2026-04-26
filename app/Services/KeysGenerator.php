@@ -54,13 +54,22 @@ class KeysGenerator
     }
 
     /**
+     * Check if both keys already exist.
+     */
+    public function keysExist(): bool
+    {
+        return file_exists($this->privateKeyPath) && filesize($this->privateKeyPath) > 0
+            && file_exists($this->publicKeyPath) && filesize($this->publicKeyPath) > 0;
+    }
+
+    /**
      * Generate keys
      * @param bool $overwrite
      * @return bool
      */
     public function generateKeys(bool $overwrite = false): bool
     {
-        if (!$overwrite && file_exists($this->privateKeyPath)) {
+        if (!$overwrite && $this->keysExist()) {
             return false;
         }
 
