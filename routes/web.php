@@ -5,10 +5,6 @@ use Vpn\App\Http\Controllers\Web\UserController;
 
 Route::middleware(["throttle:third-party:vpn:web"])->group(function () {
 
-    Route::get('/', function () {
-        return view('Vpn::welcome');
-    })->name('welcome');
-
     Route::group([
         'prefix' => 'users',
         'as' => 'users.'
