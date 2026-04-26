@@ -136,7 +136,7 @@ class System
     {
         if ($port < 1024 || $port > 65535) {
             throw new ReportError(
-                "The selected port is not valid. Please choose a port between 1024 and 65535.",
+                __('The selected port is not valid. Please choose a port between 1024 and 65535.'),
                 403
             );
         }

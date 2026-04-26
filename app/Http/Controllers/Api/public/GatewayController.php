@@ -30,6 +30,6 @@ class GatewayController
             return  response()->noContent(204);
         }
 
-        throw new ReportError("Invalid credentials", 401);
+        throw new ReportError(__('Invalid credentials'), 401);
     }
 }

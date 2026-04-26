@@ -47,13 +47,13 @@ class KeysGenerator extends Command
         $force = $this->option('force');
 
         if (file_exists("$keyGen->path/priv.pem") && !$force) {
-            if (!$this->confirm("The keys already exist. Do you want to overwrite them?")) {
-                $this->info("Key generation canceled.");
+            if (!$this->confirm(__('The keys already exist. Do you want to overwrite them?'))) {
+                $this->info(__('Key generation canceled.'));
                 return;
             }
         }
 
         $keyGen->generateKeys(true);
-        $this->info("Keys successfully generated in $keyGen->path");
+        $this->info(__('Keys successfully generated in :path', ['path' => $keyGen->path]));
     }
 }

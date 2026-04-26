@@ -119,7 +119,7 @@ class Core extends \Vpn\App\Wrapper\System
         )->wait();
 
         if ($status->code != self::OK) {
-            throw new ReportError("gRPC error: " . $status->details, $status->code);
+            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
         }
 
         return $response->getMessage();
@@ -141,7 +141,7 @@ class Core extends \Vpn\App\Wrapper\System
         )->wait();
 
         if ($status->code != self::OK) {
-            throw new ReportError("gRPC error: " . $status->details, $status->code);
+            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
         }
 
         return $response->getMessage();
@@ -163,7 +163,7 @@ class Core extends \Vpn\App\Wrapper\System
         )->wait();
 
         if ($status->code != self::OK) {
-            throw new ReportError("gRPC error: " . $status->details, $status->code);
+            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
         }
 
         return $response->getMessage();
@@ -185,7 +185,7 @@ class Core extends \Vpn\App\Wrapper\System
         )->wait();
 
         if ($status->code != self::OK) {
-            throw new ReportError("gRPC error: " . $status->details, $status->code);
+            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
         }
 
         return $response->getMessage();
@@ -230,7 +230,7 @@ class Core extends \Vpn\App\Wrapper\System
         )->wait();
 
         if ($status->code != self::OK) {
-            throw new ReportError("gRPC error: " . $status->details, $status->code);
+            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
         }
 
         return $response->getMessage();
@@ -254,7 +254,7 @@ class Core extends \Vpn\App\Wrapper\System
         )->wait();
 
         if ($status->code != self::OK) {
-            throw new ReportError("gRPC error: " . $status->details, $status->code);
+            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
         }
 
         return $response->getMessage();
@@ -272,7 +272,7 @@ class Core extends \Vpn\App\Wrapper\System
         )->wait();
 
         if ($status->code != self::OK) {
-            throw new ReportError("gRPC error: " . $status->details, $status->code);
+            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
         }
 
         $interfaces = [];
@@ -300,7 +300,7 @@ class Core extends \Vpn\App\Wrapper\System
         )->wait();
 
         if ($status->code != self::OK) {
-            throw new ReportError("gRPC error: " . $status->details, $status->code);
+            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
         }
 
         return $response->getMessage();

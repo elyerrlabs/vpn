@@ -282,7 +282,7 @@ final class ServerService extends MasterService implements Service
         $model = $this->repository->find($id);
 
         if ($model->wireguards()->count()) {
-            throw new ReportError(__("his server cannot be deleted because WireGuard interfaces are associated with it."), 403);
+            throw new ReportError(__('This server cannot be deleted because WireGuard interfaces are associated with it.'), 403);
         }
 
         $model->delete();
@@ -304,7 +304,7 @@ final class ServerService extends MasterService implements Service
             ->first();
 
         if ($model->wireguards()->count()) {
-            throw new ReportError(__("his server cannot be deleted because WireGuard interfaces are associated with it."), 403);
+            throw new ReportError(__('This server cannot be deleted because WireGuard interfaces are associated with it.'), 403);
         }
 
         $model->delete();

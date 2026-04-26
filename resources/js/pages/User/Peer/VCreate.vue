@@ -74,7 +74,7 @@
                 v-model="form.name"
                 required
                 :error="errors.name"
-                placeholder="Ej: Mi Celular, Mi Laptop, Tablet de Casa"
+                :placeholder="__('Example: My Phone, My Laptop, Home Tablet')"
                 class="dark:bg-gray-800 dark:text-gray-200"
               />
               <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 ml-1">

@@ -4,7 +4,7 @@
       @click="toggle"
       class="px-4 py-2 cursor-pointer bg-blue-500 text-white"
     >
-      {{ buttonName }}
+      {{ __(buttonName) }}
     </button>
     <v-modal v-model="dialog" :title="__(title)" panel-class="w-full lg:w-4xl">
       <template #body>

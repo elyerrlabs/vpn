@@ -90,7 +90,7 @@ class ServiceProvider extends Provider
     private function decodeComposer()
     {
         if (!file_exists($this->composerFile)) {
-            throw new \Exception("composer.json not found");
+            throw new \Exception(__('composer.json not found'));
         }
         return json_decode(file_get_contents($this->composerFile));
     }
