@@ -1,24 +1,11 @@
 <template>
   <div>
-    <button
+    <v-button
       @click="open"
-      class="px-4 py-2 cursor-pointer bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-600 dark:hover:bg-blue-700 rounded-md transition-colors flex items-center gap-2"
-    >
-      <svg
-        class="w-4 h-4"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M12 4v16m8-8H4"
-        />
-      </svg>
-      {{ __("Create new device") }}
-    </button>
+      :label="__('Create new device')"
+      left-icon="mdi mdi-plus"
+    />
+
     <v-modal
       v-model="dialog"
       :title="title"
@@ -27,45 +14,16 @@
     >
       <template #body>
         <div v-if="!createdPeer">
-          <div
-            class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-6"
+          <v-head
+            :title="__('What is a device?')"
+            :description="
+              __(
+                'Each device (phone, laptop, tablet) needs its own configuration to use the VPN. Create one for each device you want to protect.',
+              )
+            "
           >
-            <div class="flex items-start gap-3">
-              <div class="shrink-0">
-                <div
-                  class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center"
-                >
-                  <svg
-                    class="w-4 h-4 text-blue-600 dark:text-blue-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-              </div>
-              <div>
-                <h3
-                  class="font-semibold text-blue-800 dark:text-blue-300 text-sm mb-1"
-                >
-                  {{ __("What is a 'device'?") }}
-                </h3>
-                <p class="text-blue-700 dark:text-blue-400 text-sm">
-                  {{
-                    __(
-                      "Each device (phone, laptop, tablet) needs its own configuration to use the VPN. Create one for each device you want to protect."
-                    )
-                  }}
-                </p>
-              </div>
-            </div>
-          </div>
+            <template #bottom> </template>
+          </v-head>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div>
@@ -87,12 +45,12 @@
                 :label="__('Select Server Location')"
                 v-model="form.wireguard_id"
                 :options="servers"
-                required
                 :error="errors.wireguard_id"
                 label-key="country"
                 value-key="id"
-                class="dark:bg-gray-800 dark:text-gray-200"
-              />
+                searchable
+                @search="searchServers"
+              ></v-select>
               <div class="flex items-start gap-2 mt-2 ml-1">
                 <svg
                   class="w-4 h-4 text-green-500 dark:text-green-400 shrink-0 mt-0.5"
@@ -162,7 +120,7 @@
                     >
                     <span>{{
                       __(
-                        "You can use this configuration on only one device at a time"
+                        "You can use this configuration on only one device at a time",
                       )
                     }}</span>
                   </li>
@@ -577,7 +535,7 @@
                 </svg>
                 {{
                   __(
-                    "QR code scanner (for phones) or file browser (for computers)"
+                    "QR code scanner (for phones) or file browser (for computers)",
                   )
                 }}
               </li>
@@ -644,6 +602,8 @@
 import VModal from "@vpn/components/VModal.vue";
 import VInput from "@vpn/components/VInput.vue";
 import VSelect from "@vpn/components/VSelect.vue";
+import VButton from "@vpn/components/VButton.vue";
+import VHead from "@vpn/components/VHead.vue";
 import { ref, computed, nextTick, onUnmounted } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import QRious from "qrious";
@@ -665,6 +625,8 @@ const form = ref({
 const errors = ref({});
 const servers = ref([]);
 
+const servers_name = ref("");
+
 const title = computed(() => {
   return createdPeer.value
     ? __("✅ Device Created Successfully!")
@@ -675,31 +637,31 @@ const setupSteps = [
   {
     title: __("Step 1: Choose a device name"),
     description: __(
-      "Pick a name that helps you identify this device (e.g., 'My iPhone', 'Work Laptop')"
+      "Pick a name that helps you identify this device (e.g., 'My iPhone', 'Work Laptop')",
     ),
   },
   {
     title: __("Step 2: Select a server location"),
     description: __(
-      "Choose the server closest to you for the fastest connection speed"
+      "Choose the server closest to you for the fastest connection speed",
     ),
   },
   {
     title: __("Step 3: Save the configuration"),
     description: __(
-      "Download the .conf file or scan the QR code immediately - you won't see it again!"
+      "Download the .conf file or scan the QR code immediately - you won't see it again!",
     ),
   },
   {
     title: __("Step 4: Set up WireGuard app"),
     description: __(
-      "Install WireGuard on your device and import the configuration"
+      "Install WireGuard on your device and import the configuration",
     ),
   },
   {
     title: __("Step 5: Connect and enjoy!"),
     description: __(
-      "Turn on the VPN connection in WireGuard to protect your internet"
+      "Turn on the VPN connection in WireGuard to protect your internet",
     ),
   },
 ];
@@ -721,11 +683,16 @@ const resetModal = () => {
   }
 };
 
+const searchServers = async (val) => {
+  servers_name.value = val;
+  await listWireguardServer();
+};
+
 const create = async () => {
   errors.value = {};
 
   try {
-    const res = await $server.post(page.props.routes.peers, form.value);
+    const res = await $server.post(page.props.api.peers, form.value);
     if (res.status == 201) {
       createdPeer.value = res.data;
       emits("created");
@@ -783,7 +750,7 @@ const downloadConfig = () => {
 
   $notify.success(
     __("File downloaded!"),
-    __("Now import this file into WireGuard app on your device.")
+    __("Now import this file into WireGuard app on your device."),
   );
 };
 
@@ -794,7 +761,7 @@ const copyToClipboard = async () => {
     await navigator.clipboard.writeText(createdPeer.value.config);
     $notify.success(
       __("Copied to clipboard!"),
-      __("Paste this into WireGuard's 'Add Tunnel' → 'Create from text'.")
+      __("Paste this into WireGuard's 'Add Tunnel' → 'Create from text'."),
     );
   } catch (error) {
     $notify.error(__("Failed to copy configuration"));
@@ -803,8 +770,9 @@ const copyToClipboard = async () => {
 
 const listWireguardServer = async () => {
   try {
-    const res = await $server.get(page.props.routes.wireguard, {
+    const res = await $server.get(page.props.api.wireguard, {
       params: {
+        name: servers_name.value,
         per_page: 50,
       },
     });

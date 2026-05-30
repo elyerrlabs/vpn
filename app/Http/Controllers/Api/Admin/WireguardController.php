@@ -27,21 +27,15 @@ use Vpn\App\Transformers\Admin\WireguardTransformer;
 
 class WireguardController extends \App\Http\Controllers\ApiController
 {
-    /**
-     * Repository
-     * @var
-     */
-    public $service;
 
-    public function __construct(WireguardService $wireguardService)
+    /**
+     * Construct
+     * @param WireguardService $wireguardService
+     */
+    public function __construct(protected WireguardService $wireguardService)
     {
         parent::__construct();
-        $this->service = $wireguardService;
-        $this->middleware('scope:administrator:vpn:full,administrator:vpn:view')->only('index', 'interfaces');
-        $this->middleware('scope:administrator:vpn:full,administrator:vpn:create')->only('store');
-        $this->middleware('scope:administrator:vpn:full,administrator:vpn:show')->only('show');
-        $this->middleware('scope:administrator:vpn:full,administrator:vpn:update')->only('update', 'shutdown', 'start');
-        $this->middleware('scope:administrator:vpn:full,administrator:vpn:destroy')->only('destroy');
+        $this->middleware('scope:administrator:vpn:full,administrator:vpn:view')->only('index');
     }
 
     /**
@@ -51,99 +45,8 @@ class WireguardController extends \App\Http\Controllers\ApiController
      */
     public function index(Request $request)
     {
-        $query = $this->service->search($request);
+        $query = $this->wireguardService->search($request);
 
         return $this->showAllByBuilder($query, WireguardTransformer::class);
-    }
-
-    /**
-     * Store
-     * @param Request $request
-     * @return mixed|\Illuminate\Http\JsonResponse
-     */
-    public function store(Request $request)
-    {
-        $this->validate($request, [
-            'name' => ['required', 'max:150', 'min:3'],
-            'listen_port' => [
-                'required',
-                'integer',
-                'between:1024,65535',
-                Rule::unique('vpn_wireguards')->where(
-                    fn($q) =>
-                    $q->where('server_id', $request->server_id)
-                ),
-            ],
-            'dns' => ['nullable', 'ipv4'],
-            'dns_enabled' => ['nullable', 'boolean'],
-            'network_interface' => ['required'],
-            'mounted' => ['nullable', 'boolean'],
-            'public' => ['nullable', 'boolean'],
-            'server_id' => ['required', 'exists:vpn_servers,id']
-        ]);
-
-        $model = $this->service->create($request->toArray());
-
-        return $this->showOne($model, WireguardTransformer::class, 201);
-    }
-
-    /**
-     * Show specific resource
-     * @param string $id
-     * @return \Elyerr\ApiResponse\Assets\JsonResponser
-     */
-    public function show(string $id)
-    {
-        $model = $this->service->details($id);
-
-        return $this->showOne($model, WireguardTransformer::class);
-    }
-
-    /**
-     * Update specific resource
-     * @param \App\Http\Requests\Wireguard\UpdateRequest $request
-     * @param string $id
-     * @return \Elyerr\ApiResponse\Assets\JsonResponser
-     */
-    public function update(Request $request, string $id)
-    {
-        $model = $this->service->update($id, $request->toArray());
-
-        return $this->showOne($model);
-    }
-
-    /**
-     * Destroy specific resource
-     * @param string $id
-     * @return \Elyerr\ApiResponse\Assets\JsonResponser
-     */
-    public function destroy(string $id)
-    {
-        $model = $this->service->delete($id);
-
-        return $this->showOne($model, WireguardTransformer::class);
-    }
-
-    /**
-     * Shutdown the wireguard interface
-     * @param string $id
-     * @return void
-     */
-    public function shutdown(string $id)
-    {
-        $this->service->shutdown($id);
-
-        return $this->message(__('The WireGuard server is already stopped'), 200);
-    }
-
-    /**
-     * Start the wireguard interface
-     * @param string $id
-     * @return void
-     */
-    public function start(string $id)
-    {
-        $this->service->start($id);
-        return $this->message(__('The WireGuard server is already started'), 200);
     }
 }

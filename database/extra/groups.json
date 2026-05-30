@@ -12,42 +12,42 @@
             "public": 0,
             "active": 1,
             "api_key": 1,
-            "web": 0
+            "web": 1
           },
           {
             "name": "view",
             "public": 0,
             "active": 1,
             "api_key": 1,
-            "web": 0
+            "web": 1
           },
           {
             "name": "create",
             "public": 0,
             "active": 1,
-            "api_key": 1,
-            "web": 0
+            "api_key": 0,
+            "web": 1
           },
           {
             "name": "update",
             "public": 0,
             "active": 1,
-            "api_key": 1,
-            "web": 0
+            "api_key": 0,
+            "web": 1
           },
           {
             "name": "show",
             "public": 0,
             "active": 1,
-            "api_key": 1,
-            "web": 0
+            "api_key": 0,
+            "web": 1
           },
           {
             "name": "destroy",
             "public": 0,
             "active": 1,
-            "api_key": 1,
-            "web": 0
+            "api_key": 0,
+            "web": 1
           }
         ]
       }
@@ -67,31 +67,37 @@
             "public": 0,
             "active": 1,
             "api_key": 1,
-            "web": 0
+            "web": 1
           },
           {
             "name": "intermediate",
             "public": 0,
             "active": 1,
             "api_key": 1,
-            "web": 0
+            "web": 1
           },
           {
             "name": "advanced",
             "public": 0,
             "active": 1,
             "api_key": 1,
-            "web": 0
+            "web": 1
           },
           {
             "name": "professional",
             "public": 0,
             "active": 1,
             "api_key": 1,
-            "web": 0
+            "web": 1
           }
         ]
-      },
+      }
+    ]
+  },
+  {
+    "name": "enterprise",
+    "description": "Exclusive services designed for businesses, providing advanced cloud solutions, dedicated infrastructure, and enterprise-grade security.",
+    "actions": [
       {
         "name": "VPN Servers",
         "description": "Service to manage, configure, and orchestrate VPN server nodes across multiple environments",
@@ -102,28 +108,28 @@
             "public": 0,
             "active": 1,
             "api_key": 1,
-            "web": 0
+            "web": 1
           },
           {
             "name": "intermediate",
             "public": 0,
             "active": 1,
             "api_key": 1,
-            "web": 0
+            "web": 1
           },
           {
             "name": "advanced",
             "public": 0,
             "active": 1,
             "api_key": 1,
-            "web": 0
+            "web": 1
           },
           {
             "name": "professional",
             "public": 0,
             "active": 1,
             "api_key": 1,
-            "web": 0
+            "web": 1
           }
         ]
       }

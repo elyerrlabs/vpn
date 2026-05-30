@@ -28,31 +28,25 @@ use Vpn\App\Transformers\User\PeerTransformer;
 class PeerController extends ApiController
 {
     /**
-     * Repository
-     * @var PeerService
-     */
-    public $service;
-
-    /**
      * Construct
      * @param PeerService $peerService
      */
-    public function __construct(PeerService $peerService)
+    public function __construct(protected PeerService $peerService)
     {
         parent::__construct();
-        $this->service = $peerService;
+        $this->middleware('scope:administrator:vpn:full,commerce:vpn:professional,commerce:vpn:advanced,commerce:vpn:intermediate,commerce:vpn:basic');
     }
 
     /**
-     * Show all resources
-     * @param \App\Models\Server\Peer $peer
+     * Index
+     * @param Request $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
         $request->merge(['user_id' => request()->user()->id]);
 
-        $data = $this->service->search($request);
+        $data = $this->peerService->search($request);
 
         return $this->showAllByBuilder($data, PeerTransformer::class);
     }
@@ -69,7 +63,7 @@ class PeerController extends ApiController
             'wireguard_id' => ['required', 'exists:vpn_wireguards,id']
         ]);
 
-        $model = $this->service->create($request->toArray());
+        $model = $this->peerService->create($request->toArray());
 
         return $this->showOne($model, PeerTransformer::class, 201);
     }
@@ -81,7 +75,7 @@ class PeerController extends ApiController
      */
     public function destroy(string $id)
     {
-        $model = $this->service->delete($id);
+        $model = $this->peerService->delete($id);
 
         return $this->showOne($model, PeerTransformer::class);
     }

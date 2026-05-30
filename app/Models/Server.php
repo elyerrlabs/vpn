@@ -29,12 +29,6 @@ class Server extends Master
      */
     public $table = "vpn_servers";
 
-    /**
-     * Transformer class to output information to the client
-     * @var
-     */
-    public $transformer = ServerTransformer::class;
-
     public $fillable = [
         'name',
         'ip',

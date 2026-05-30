@@ -55,11 +55,11 @@ class MasterService
         ];
 
         $this->plans_vpn_servers = [
-            'commerce:vpn-servers:professional' => config_module('plans.servers.professional', 5),
-            'commerce:vpn-servers:advanced' => config_module('plans.servers.advanced', 3),
-            'commerce:vpn-servers:intermediate' => config_module('plans.servers.intermediate', 2),
-            'commerce:vpn-servers:basic' => config_module('plans.servers.basic', 1),
-            'commerce:vpn-servers:free' => config_module('plans.servers.free', 0),
+            'enterprise:vpn-servers:professional' => config_module('plans.servers.professional', 5),
+            'enterprise:vpn-servers:advanced' => config_module('plans.servers.advanced', 3),
+            'enterprise:vpn-servers:intermediate' => config_module('plans.servers.intermediate', 2),
+            'enterprise:vpn-servers:basic' => config_module('plans.servers.basic', 1),
+            'enterprise:vpn-servers:free' => config_module('plans.servers.free', 0),
         ];
     }
 
@@ -204,16 +204,23 @@ class MasterService
      */
     public function verifyVpnPlan($user)
     {
-        //Retrieve the all vpn device (Wireguard protocol)
+        // Retrieve all WireGuard VPN peer devices assigned to the current user,
+        // excluding peers connected to servers owned by the same user
         $wireguard = app(PeerRepository::class)
             ->query()
-            ->where('user_id', $user->id);
+            ->where('user_id', $user->id)
+            ->whereHas('wireguard.server', function ($q) use ($user) {
+                $q->where(function ($q) use ($user) {
+                    $q->whereNull('user_id')
+                        ->orWhere('user_id', '!=', $user->id);
+                });
+            });
 
         $access = collect($this->scopes(true, true))->pluck('id');
 
         //check user plan
         $userLimit = collect($this->plans_vpn)
-            ->filter(fn ($limit, $plan) => $access->contains($plan))
+            ->filter(fn($limit, $plan) => $access->contains($plan))
             ->first() ?? config_module('plans.peers.free', 2);
 
         throw_if(
@@ -234,9 +241,9 @@ class MasterService
 
         //check user plan
         $userLimit = collect($this->plans_vpn_servers)
-            ->filter(fn ($limit, $plan) => $access->contains($plan))
+            ->filter(fn($limit, $plan) => $access->contains($plan))
             ->first() ?? config_module('plans.servers.free', 0);
-         
+
         throw_if(
             $servers->count() >= $userLimit,
             new ReportError(
@@ -328,7 +335,7 @@ class MasterService
 
         //check user plan
         $amount = collect($this->plans_vpn)
-            ->filter(fn ($limit, $plan) => $access->contains($plan))
+            ->filter(fn($limit, $plan) => $access->contains($plan))
             ->first() ?? config('vpn.free');
 
 

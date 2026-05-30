@@ -129,7 +129,11 @@ final class PeerService extends MasterService implements Service
             //---------check plans --------------------------//
             if (!app()->environment(['local', 'dev'])) {
                 //user access
-                $this->verifyVpnPlan($user);
+
+                // Check the plan is not onwner for this server
+                if (!$this->checkServerOwner($data['wireguard_id'])) {
+                    $this->verifyVpnPlan($user);
+                }
             }
 
             //Retrieve Wireguard server
@@ -254,5 +258,36 @@ final class PeerService extends MasterService implements Service
         });
 
         return $model;
+    }
+
+    /**
+     * Check server owner
+     * @param string $wireguard_id
+     * @return bool
+     */
+    public function checkServerOwner(string $wireguard_id)
+    {
+        $wireguardServer = app(WireguardService::class)->details($wireguard_id, true);
+
+        if (empty($wireguardServer)) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    public function start(string $id)
+    {
+        $model = $this->repository->find($id);
+
+        $this->core($model->wireguard);
+        
+    }
+
+
+    public function stop(string $id)
+    {
+
     }
 }

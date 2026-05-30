@@ -14,10 +14,21 @@ Route::middleware(["throttle:third-party:vpn:admin"])->group(function () {
         'as' => 'admin.'
     ], function () {
 
-        Route::resource('servers', \Vpn\App\Http\Controllers\Api\Admin\ServerController::class)->except('create', 'edit');
-        Route::resource('wireguard', \Vpn\App\Http\Controllers\Api\Admin\WireguardController::class)->except('create', 'edit');
-        Route::put('wireguard/{wireguard}/shutdown', [\Vpn\App\Http\Controllers\Api\Admin\WireguardController::class, 'shutdown'])->name('wireguard.shutdown');
-        Route::put('wireguard/{wireguard}/start', [\Vpn\App\Http\Controllers\Api\Admin\WireguardController::class, 'start'])->name('wireguard.start');
+        /**
+         * List servers
+         */
+        Route::resource(
+            'servers',
+            \Vpn\App\Http\Controllers\Api\Admin\ServerController::class
+        )->only('index');
+
+        /**
+         * List wireguard servers
+         */
+        Route::resource(
+            'wireguard',
+            \Vpn\App\Http\Controllers\Api\Admin\WireguardController::class
+        )->only('index');
     });
 
 
@@ -26,19 +37,43 @@ Route::middleware(["throttle:third-party:vpn:admin"])->group(function () {
         'as' => 'users.'
     ], function () {
 
-        Route::get('/servers/all', [\Vpn\App\Http\Controllers\Api\User\ServerController::class, 'listServers'])->name('lists.servers');
-        Route::resource('servers', \Vpn\App\Http\Controllers\Api\User\ServerController::class)->except('edit', 'create');
+        /**
+         * List servers for users
+         */
+        Route::get('/servers/list', [
+            \Vpn\App\Http\Controllers\Api\User\ServerController::class,
+            'listServers'
+        ])->name('servers.list');
 
-        Route::get('wireguard/all', [\Vpn\App\Http\Controllers\Api\User\WireguardController::class, 'listWireguardServersForUser'])->name('lists.wireguard');
-        Route::resource('wireguard', \Vpn\App\Http\Controllers\Api\User\WireguardController::class)->except('edit', 'create');
-        Route::put('wireguard/{wireguard}/shutdown', [\Vpn\App\Http\Controllers\Api\User\WireguardController::class, 'shutdown'])->name('wireguard.shutdown');
-        Route::put('wireguard/{wireguard}/start', [\Vpn\App\Http\Controllers\Api\User\WireguardController::class, 'start'])->name('wireguard.start');
+        Route::resource(
+            'servers',
+            \Vpn\App\Http\Controllers\Api\User\ServerController::class,
+        )->only('index');
 
-        Route::resource('peers', \Vpn\App\Http\Controllers\Api\User\PeerController::class)->only('index', 'store', 'update', 'destroy');
+        /**
+         * List wireguard servers
+         */
+        Route::get('wireguards/list', [
+            \Vpn\App\Http\Controllers\Api\User\WireguardController::class,
+            'listWireguardServersForUser'
+        ])->name('wireguard.list');
+
+        Route::resource(
+            'wireguards',
+            \Vpn\App\Http\Controllers\Api\User\WireguardController::class
+        )->only('index');
+
+        /**
+         * Peer routes
+         */
+        Route::resource(
+            'peers',
+            \Vpn\App\Http\Controllers\Api\User\PeerController::class
+        )->only('index', 'store', 'destroy');
     });
 });
 
-
-Route::get('/gateway',  GatewayController::class)
-    ->middleware('throttle:third-party:vpn:admin')
-    ->name('gateway');
+/**
+ * Gataway server to server validation
+ */
+Route::get('/gateway', GatewayController::class)->middleware('throttle:third-party:vpn:admin')->name('gateway');

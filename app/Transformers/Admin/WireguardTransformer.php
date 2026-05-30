@@ -52,6 +52,21 @@ class WireguardTransformer extends TransformerAbstract
      */
     public function transform(Wireguard $wireguard)
     {
+
+        $links = request()->wantsJson() ?
+            [
+                'index' => route('module.vpn.api.admin.wireguard.index')
+            ] :
+            [
+                'index' => route('module.vpn.admin.wireguards.index'),
+                'store' => route('module.vpn.admin.wireguards.store'),
+                'update' => route('module.vpn.admin.wireguards.update', ['wireguard' => $wireguard->id]),
+                'destroy' => route('module.vpn.admin.wireguards.destroy', ['wireguard' => $wireguard->id]),
+                'start' => route('module.vpn.admin.wireguards.start', ['wireguard' => $wireguard->id]),
+                'shutdown' => route('module.vpn.admin.wireguards.shutdown', ['wireguard' => $wireguard->id]),
+            ];
+
+
         return [
             'id' => $wireguard->id,
             'name' => $wireguard->name,
@@ -71,15 +86,7 @@ class WireguardTransformer extends TransformerAbstract
                 'url' => $wireguard->server->url,
                 'ip' => $wireguard->server->ip,
             ],
-            'links' => [
-                'index' => route('module.vpn.api.admin.wireguard.index'),
-                'store' => route('module.vpn.api.admin.wireguard.store'),
-                'show' => route('module.vpn.api.admin.wireguard.show', ['wireguard' => $wireguard->id]),
-                'update' => route('module.vpn.api.admin.wireguard.update', ['wireguard' => $wireguard->id]),
-                'destroy' => route('module.vpn.api.admin.wireguard.destroy', ['wireguard' => $wireguard->id]),
-                'start' => route('module.vpn.api.admin.wireguard.start', ['wireguard' => $wireguard->id]),
-                'shutdown' => route('module.vpn.api.admin.wireguard.shutdown', ['wireguard' => $wireguard->id]),
-            ],
+            'links' => $links,
         ];
     }
 }

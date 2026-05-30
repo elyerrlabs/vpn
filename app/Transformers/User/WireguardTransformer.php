@@ -54,7 +54,7 @@ class WireguardTransformer extends TransformerAbstract
             'id' => $wireguard->id,
             'slug' => $wireguard->slug,
             'country' => "{$wireguard->server->name} - {$wireguard->name}",
-            'data' => location($wireguard->server->ip),
+            'ip' => $wireguard->server->ip,
             'by' => [
                 'name' => $wireguard->server?->user?->name ?? config('app.name'),
                 'last_name' => $wireguard->server?->user?->last_name ?? config('app.org_name')

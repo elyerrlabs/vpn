@@ -9,14 +9,42 @@ use Vpn\App\Http\Controllers\Web\SettingController;
 
 Route::middleware("throttle:third-party:vpn:admin")->group(function () {
 
-    Route::get('servers', [\Vpn\App\Http\Controllers\Web\AdminController::class, 'servers'])->name('servers');
-    Route::get('wireguard', [\Vpn\App\Http\Controllers\Web\AdminController::class, 'wireguard'])->name('wireguard');
+    /**
+     * Server routes
+     */
+    Route::resource(
+        'servers',
+        \Vpn\App\Http\Controllers\Admin\ServerController::class
+    )->only('index', 'store', 'update', 'destroy');
 
+    /**
+     * Wireguard routes
+     */
+    Route::put(
+        'wireguards/{wireguard}/shutdown',
+        [\Vpn\App\Http\Controllers\Admin\WireguardController::class, 'shutdown']
+    )->name('wireguards.shutdown');
+
+    Route::put(
+        'wireguards/{wireguard}/start',
+        [\Vpn\App\Http\Controllers\Admin\WireguardController::class, 'start']
+    )->name('wireguards.start');
+
+    Route::resource(
+        'wireguards',
+        \Vpn\App\Http\Controllers\Admin\WireguardController::class
+    )->only('index', 'store', 'update', 'destroy');
+
+    /**
+     * Settings routes
+     */
     Route::group([
         'prefix' => 'settings',
         'as' => 'settings.'
     ], function () {
-
-        Route::get('/', [SettingController::class, 'general'])->name('general');
+        Route::get(
+            '/',
+            [\Vpn\App\Http\Controllers\Admin\SettingController::class, 'general']
+        )->name('general');
     });
 });

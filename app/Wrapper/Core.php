@@ -296,7 +296,8 @@ class Core extends \Vpn\App\Wrapper\System
         $request->setInterfaceName($interface_name);
 
         list($response, $status) = $this->getClient()->restart(
-            $request
+            $request,
+            $this->getMetadata()
         )->wait();
 
         if ($status->code != self::OK) {

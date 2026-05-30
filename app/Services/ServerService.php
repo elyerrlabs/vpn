@@ -52,25 +52,22 @@ final class ServerService extends MasterService implements Service
     {
         $query = $this->repository->query();
 
-        if ($request->filled('hidden')) {
-            $query->where('hidden', $request->hidden);
-        }
-
-        if ($request->filled('user_id')) {
-            $query->where('user_id', $request->user()->user_id);
-        }
-
-        if ($request->filled('internal')) {
-            $query->where('internal', '=', $request->internal);
-        }
-
-        if ($request->filled('name')) {
-            $query->whereRaw('lower(name) like ?', ['%' . strtolower($request->name) . '%']);
-        }
-
-        if ($request->filled('url')) {
-            $query->whereRaw('lower(url) like ?', ['%' . strtolower($request->url) . '%']);
-        }
+        $query->when(
+            $request->filled('hidden'),
+            fn($q) => $q->where('hidden', $request->hidden)
+        );
+        $query->when(
+            $request->filled('user_id'),
+            fn($q) => $q->where('user_id', $request->user_id)
+        );
+        $query->when(
+            $request->filled('internal'),
+            fn($q) => $q->where('internal', $request->internal)
+        );
+        $query->when(
+            $request->filled('name'),
+            fn($q) => $query->whereRaw('lower(name) like ?', ['%' . strtolower($request->name) . '%'])
+        );
 
         return $query;
     }
@@ -88,17 +85,15 @@ final class ServerService extends MasterService implements Service
 
         $query->orWhere('user_id', $request->user()->id);
 
-        if ($request->filled('internal')) {
-            $query->where('internal', '=', $request->internal);
-        }
+        $query->when(
+            $request->filled('internal'),
+            fn($q) => $q->where('internal', $request->internal)
+        );
 
-        if ($request->filled('name')) {
-            $query->whereRaw('lower(name) like ?', ['%' . strtolower($request->name) . '%']);
-        }
-
-        if ($request->filled('url')) {
-            $query->whereRaw('lower(url) like ?', ['%' . strtolower($request->url) . '%']);
-        }
+        $query->when(
+            $request->filled('name'),
+            fn($q) => $q->whereRaw('lower(name) like ?', ['%' . strtolower($request->name) . '%'])
+        );
 
         return $query;
     }
@@ -114,17 +109,15 @@ final class ServerService extends MasterService implements Service
         $query->where('user_id', $request->user()->id);
         $query->where('internal', false);
 
-        if ($request->filled('hidden')) {
-            $query->where('hidden', $request->hidden);
-        }
+        $query->when(
+            $request->filled('hidden'),
+            fn($q) => $q->where('hidden', $request->hidden)
+        );
 
-        if ($request->filled('name')) {
-            $query->whereRaw('lower(name) like ?', ['%' . strtolower($request->name) . '%']);
-        }
-
-        if ($request->filled('url')) {
-            $query->whereRaw('lower(url) like ?', ['%' . strtolower($request->url) . '%']);
-        }
+        $query->when(
+            $request->filled('name'),
+            fn($q) => $q->whereRaw('lower(name) like ?', ['%' . strtolower($request->name) . '%'])
+        );
 
         return $query;
     }
@@ -146,6 +139,16 @@ final class ServerService extends MasterService implements Service
      */
     public function createForUser(array $data)
     {
+        $inputs = [
+            'name' => $data['name'],
+            'ip' => $data['ip'],
+            'port' => $data['port'],
+            'proxy_port' => $data['proxy_port'] ?? 1080,
+            'socks_port' => $data['socks_port'] ?? 1090,
+            'user_id' => request()->user()->id,
+            'internal' => false,
+            'hidden' => $data['hidden'] ?? false,
+        ];
 
         //---------check plans --------------------------//
         if (!app()->environment(['local', 'dev'])) {
@@ -153,7 +156,7 @@ final class ServerService extends MasterService implements Service
             $this->verifyVpnServerPlan(request()->user());
         }
 
-        return   $this->create($data);
+        return $this->create($inputs);
     }
 
     /**

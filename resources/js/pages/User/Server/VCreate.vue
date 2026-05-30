@@ -1,26 +1,32 @@
 <template>
   <div>
-    <button
+    <v-button
       @click="toggle"
-      class="px-4 py-2 cursor-pointer bg-blue-500 text-white"
+      :label="item?.id ? '' : __('Add new server')"
+      :title="item?.id ? __('Update server') : __('Add new server')"
+      :round="item?.id ? true : false"
+      :icon="item?.id ? 'mdi mdi-pencil' : 'mdi mdi-plus'"
+      :variant="item?.id ? 'success' : 'secondary'"
+    />
+    <v-modal
+      v-model="dialog"
+      :title="item?.id ? __('Edit server information') : 'Add new server'"
+      panel-class="w-full lg:w-6xl"
     >
-      {{ __(buttonName) }}
-    </button>
-    <v-modal v-model="dialog" :title="__(title)" panel-class="w-full lg:w-4xl">
       <template #body>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <v-input
             :label="__('Server name')"
             v-model="form.name"
             required
-            :error="errors.name"
+            :error="form.errors.name"
           />
 
           <v-input
             :label="__('Server IP')"
             v-model="form.ip"
             required
-            :error="errors.ip"
+            :error="form.errors.ip"
           />
 
           <v-input
@@ -28,7 +34,7 @@
             v-model="form.port"
             type="number"
             required
-            :error="errors.port"
+            :error="form.errors.port"
           />
 
           <v-input
@@ -36,7 +42,7 @@
             v-model="form.proxy_port"
             type="number"
             required
-            :error="errors.proxy_port"
+            :error="form.errors.proxy_port"
           />
 
           <v-input
@@ -44,29 +50,20 @@
             v-model="form.socks_port"
             type="number"
             required
-            :error="errors.socks_port"
+            :error="form.errors.socks_port"
           />
 
           <v-switch
             :label="__('Make hidden')"
             v-model="form.hidden"
-            :error="errors.hidden"
+            :error="form.errors.hidden"
           />
         </div>
-        <div class="flex justify-between items-center">
-          <button
+        <div class="flex justify-end items-center">
+          <v-button
             @click="execute"
-            class="bg-blue-500 p-4 text-white cursor-pointer"
-          >
-            {{ item?.id ? __("Update server") : __("Add Server") }}
-          </button>
-
-          <button
-            @click="toggle"
-            class="bg-red-500 p-4 text-white cursor-pointer"
-          >
-            {{ __("Cancel") }}
-          </button>
+            :label="item?.id ? __('Update server') : __('Add Server')"
+          />
         </div>
       </template>
     </v-modal>
@@ -75,9 +72,11 @@
 <script setup>
 import VModal from "@vpn/components/VModal.vue";
 import VInput from "@vpn/components/VInput.vue";
+import VButton from "@vpn/components/VButton.vue";
 import VSwitch from "@vpn/components/VSwitch.vue";
 import { ref, onMounted } from "vue";
 import { usePage } from "@inertiajs/vue3";
+import { useForm } from "@inertiajs/vue3";
 const dialog = ref(false);
 
 const emits = defineEmits(["created", "updated"]);
@@ -88,78 +87,71 @@ const props = defineProps({
     required: false,
     default: () => {},
   },
-  title: {
-    type: String,
-    required: true,
-    default: "Add new server",
-  },
-  buttonName: {
-    type: String,
-    required: true,
-    default: "Add new server",
-  },
 });
 
 const page = usePage();
-const form = ref({});
-const errors = ref({});
+const form = useForm({
+  name: "",
+  ip: "",
+  port: 50050,
+  proxy_port: "",
+  socks_port: "",
+  hidden: "",
+});
 
 const toggle = () => {
-  form.value.name = "";
-  form.value.ip = "";
-  form.value.port = "";
-  form.value.proxy_port = "";
-  form.value.socks_port = "";
+  form.resetAndClearErrors();
   dialog.value = !dialog.value;
-  errors.value = {};
 
   if (props.item?.id) {
-    form.value = { ...props.item };
+    form.name = props.item.name;
+    form.ip = props.item.ip;
+    form.port = props.item.port;
+    form.proxy_port = props.item.proxy_port;
+    form.socks_port = props.item.socks_port;
+    form.hidden = props.item.hidden;
   }
 };
 
-const execute = async () => {
+const execute = () => {
   if (props.item?.id) {
-    await updateServer();
+    updateServer();
   } else {
-    await addServer();
+    addServer();
   }
 };
 
 const addServer = async () => {
-  try {
-    const res = await $server.post(page.props.servers.store, form.value);
-    if (res.status == 201) {
-      toggle();
+  form.post(page.props.routes.servers, {
+    preserveScroll: true,
+    preserveState: true,
+    forceFormData: true,
+    onSuccess: (res) => {
       emits("created");
-    }
-  } catch (error) {
-    if (error?.response?.data?.message) {
-      $notify.error(error.response.data.message);
-    }
-
-    if (error?.response?.status == 422) {
-      errors.value = error.response.data.errors;
-    }
-  }
+      form.resetAndClearErrors();
+      $notify.success(__("Server created successfully"));
+      dialog.value = false;
+    },
+    onError: (e) => {
+      console.log(e);
+    },
+    onFinish: () => {},
+  });
 };
 
-const updateServer = async () => {
-  try {
-    const res = await $server.put(props.item.links.update, form.value);
-    if (res.status == 200) {
-      toggle();
+const updateServer = () => {
+  form.put(props.item.links.update, {
+    preserveScroll: true,
+    preserveState: true,
+    onSuccess: (res) => {
       emits("updated");
       $notify.success(__("Server updated"));
-    }
-  } catch (error) {
-    if (error?.response?.data?.message) {
-      $notify.error(error.response.data.message);
-    }
-
-    if (error?.response?.status == 422) {
-      errors.value = error.response.data.errors;
-    }
-  }
+      dialog.value = false;
+    },
+    onError: (e) => {
+      console.log(e);
+    },
+    onFinish: () => {},
+  });
 };
 </script>

@@ -1,11 +1,12 @@
 <template>
   <div>
-    <button
+    <v-button
       @click="openModal"
-      class="mx-4 py-2 px-4 text-white bg-blue-600 hover:bg-blue-700 cursor-pointer rounded transition-colors"
-    >
-      {{ __("Manage") }}
-    </button>
+      variant="warning"
+      :title="__('Realod')"
+      left-icon="mdi mdi-reload"
+      round
+    />
 
     <v-modal v-model="dialog" :title="__('Make operations')">
       <template #body>
@@ -23,67 +24,24 @@
           </div>
 
           <div class="flex flex-col space-y-3">
-            <!-- Botón Start -->
-            <button
-              v-if="!item?.mounted"
-              @click="handleStart"
-              class="py-2 px-4 bg-green-600 hover:bg-green-700 text-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              :disabled="processing"
-            >
-              <span v-if="processing" class="flex items-center justify-center">
-                <svg class="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
-                  <circle
-                    class="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    stroke-width="4"
-                    fill="none"
-                  />
-                  <path
-                    class="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                {{ __("Processing...") }}
-              </span>
-              <span v-else>
-                {{ __("Start Server") }}
-              </span>
-            </button>
-
             <!-- Botón Shutdown -->
-            <button
-              v-if="item?.mounted"
+            <v-button
+              v-if="item.mounted"
               @click="handleShutdown"
-              class="py-2 px-4 bg-red-600 hover:bg-red-700 text-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               :disabled="processing"
-            >
-              <span v-if="processing" class="flex items-center justify-center">
-                <svg class="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
-                  <circle
-                    class="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    stroke-width="4"
-                    fill="none"
-                  />
-                  <path
-                    class="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                {{ __("Processing...") }}
-              </span>
-              <span v-else>
-                {{ __("Shutdown Server") }}
-              </span>
-            </button>
+              left-icon="mdi mdi-power"
+              variant="danger"
+              :label="processing ? __('Processing...') : __('Shutdown Server')"
+            />
+
+            <v-button
+              v-else
+              @click="handleStart"
+              :disabled="processing"
+              :label="processing ? __('Processing...') : __('Start Server')"
+              variant="success"
+              left-icon="mdi mdi-power"
+            />
 
             <!-- Mensajes informativos -->
             <div
@@ -113,19 +71,21 @@
 import { usePage } from "@inertiajs/vue3";
 import { ref, computed } from "vue";
 import VModal from "@vpn/components/VModal.vue";
+import VButton from "@vpn/components/VButton.vue";
+import { useForm } from "@inertiajs/vue3";
 
 const page = usePage();
 
 const props = defineProps({
   item: {
     type: Object,
-    required: false,
     default: () => ({}),
   },
 });
 
 const emits = defineEmits(["updated"]);
 
+const form = useForm({});
 const dialog = ref(false);
 const processing = ref(false);
 
@@ -139,49 +99,47 @@ const openModal = () => {
   dialog.value = true;
 };
 
-const handleStart = async () => {
+const handleStart = () => {
   if (processing.value) return;
 
   processing.value = true;
-  try {
-    const res = await $server.put(props.item.links.start);
 
-    if (res.status == 200) {
-      $notify.success(__(res.data.message));
+  form.put(props.item.links.start, {
+    preserveScroll: true,
+    preserveState: true,
+    onSuccess: (res) => {
+      $notify.success(__("Server started successfully"));
       dialog.value = false;
       emits("updated");
-    }
-  } catch (e) {
-    if (e?.response?.data?.message) {
-      $notify.error(e.response.data.message);
-    } else {
-      $notify.error(__("An error occurred while starting the server"));
-    }
-  } finally {
-    processing.value = false;
-  }
+    },
+    onError: (e) => {
+      console.log(e);
+    },
+    onFinish: () => {
+      processing.value = false;
+    },
+  });
 };
 
-const handleShutdown = async () => {
+const handleShutdown = () => {
   if (processing.value) return;
 
   processing.value = true;
-  try {
-    const res = await $server.put(props.item.links.shutdown);
 
-    if (res.status == 200) {
-      $notify.success(__(res.data.message));
+  form.put(props.item.links.shutdown, {
+    preserveScroll: true,
+    preserveState: true,
+    onSuccess: (res) => {
+      $notify.success(__("Server shudown successfully"));
       dialog.value = false;
       emits("updated");
-    }
-  } catch (e) {
-    if (e?.response?.data?.message) {
-      $notify.error(e.response.data.message);
-    } else {
-      $notify.error(__("An error occurred while shutting down the server"));
-    }
-  } finally {
-    processing.value = false;
-  }
+    },
+    onError: (e) => {
+      console.log(e);
+    },
+    onFinish: () => {
+      processing.value = false;
+    },
+  });
 };
 </script>

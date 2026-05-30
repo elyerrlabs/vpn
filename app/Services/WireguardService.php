@@ -74,7 +74,7 @@ final class WireguardService extends MasterService
 
         $query->when(
             $request->filled('slug'),
-            fn($q) =>  $q->whereRaw('lower(slug) like ?', ['%' . strtolower('slug') . '%'])
+            fn($q) => $q->whereRaw('lower(slug) like ?', ['%' . strtolower('slug') . '%'])
         );
 
         $query->when(
@@ -167,28 +167,26 @@ final class WireguardService extends MasterService
                 }
             )
             ->when(
-                $request->filled('slug'),
-                fn($q) =>
-                $q->whereRaw('LOWER(slug) LIKE ?', ['%' . strtolower($request->slug) . '%'])
-            )
-            ->when(
                 $request->filled('name'),
                 fn($q) =>
                 $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($request->name) . '%'])
             )
-
             ->when(
                 $request->filled('server_id'),
                 fn($q) =>
                 $q->where('server_id', $request->server_id)
             )
-
+            ->when(
+                $request->filled('server_name'),
+                function ($query) use ($request) {
+                    $query->whereHas('server', fn($q) => $q->whereRaw('name LIKE ?', ['%' . $request->server_name . '%']));
+                }
+            )
             ->when(
                 $request->filled('mounted'),
                 fn($q) =>
                 $q->where('mounted', $request->mounted)
             )
-
             ->when(
                 $request->filled('public'),
                 fn($q) =>
@@ -208,11 +206,11 @@ final class WireguardService extends MasterService
     {
         return $this->repository->query()->where('id', $id)
             ->when($forUser, fn($q) =>
-            $q->whereHas(
-                'server',
-                fn($sub) =>
-                $sub->where('user_id', request()->user()->id)
-            ))->first();
+                $q->whereHas(
+                    'server',
+                    fn($sub) =>
+                    $sub->where('user_id', request()->user()->id)
+                ))->first();
     }
 
     /**
@@ -277,8 +275,11 @@ final class WireguardService extends MasterService
 
                 $this->grpc(function () use ($model) {
 
+                    // Unique Interface Name
+                    $InterfaceName = $model->slug;
+
                     $this->core($model)->mountInterface(
-                        $model->slug,
+                        $InterfaceName,
                         $model->subnet,
                         $model->gateway,
                         $model->private_key,
@@ -341,7 +342,7 @@ final class WireguardService extends MasterService
             )->first();
 
         throw_if(
-            !$forUser &&  !$model->server->internal,
+            !$forUser && !$model->server->internal,
             new ReportError(__('This server is provided by a third party and cannot be updated.'), 403)
         );
 
@@ -369,7 +370,7 @@ final class WireguardService extends MasterService
         $model = $this->repository->query()->where('id', $id)
             ->when(
                 $forUser,
-                fn($q) =>  $q->whereHas(
+                fn($q) => $q->whereHas(
                     'server',
                     fn($sub) => $sub->where('user_id', request()->user()->id)
                 )
@@ -415,7 +416,7 @@ final class WireguardService extends MasterService
         $model = $this->repository->query()->where('id', $id)
             ->when($forUser, fn($q) => $q->whereHas(
                 'server',
-                fn($sub) =>  $sub->where('user_id', request()->user()->id)
+                fn($sub) => $sub->where('user_id', request()->user()->id)
             ))->first();
 
         throw_if(empty($model), new ReportError(__('The WireGuard server can not be found'), 404));
@@ -434,7 +435,7 @@ final class WireguardService extends MasterService
                     ->where('wireguard_id', $model->id)
                     ->update(['mounted' => false, 'stand_by' => true]);
 
-                $this->repository->update($model->id,    ['mounted' => false]);
+                $this->repository->update($model->id, ['mounted' => false]);
             });
         }
     }
@@ -474,7 +475,7 @@ final class WireguardService extends MasterService
                     ->where('wireguard_id', $model->id)
                     ->update(['mounted' => true, 'stand_by' => false]);
 
-                $this->repository->update($model->id,    ['mounted' => true]);
+                $this->repository->update($model->id, ['mounted' => true]);
             });
         }
     }

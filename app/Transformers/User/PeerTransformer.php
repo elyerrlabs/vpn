@@ -73,32 +73,8 @@ class PeerTransformer extends TransformerAbstract
             'links' => [
                 'index' => route('module.vpn.api.users.peers.index'),
                 'store' => route('module.vpn.api.users.peers.store'),
-                'update' => route('module.vpn.api.users.peers.update', ['peer' => $peer->id]),
                 'destroy' => route('module.vpn.api.users.peers.destroy', ['peer' => $peer->id]),
             ],
         ];
-    }
-
-    /**
-     * Retrieve Original Attributes to filter data
-     * @param mixed $index
-     * @return string|null
-     */
-    public static function getOriginalAttributes($index)
-    {
-        $attributes = [
-            'name' => 'name',
-            'public_key' => 'public_key',
-            'preshared_key' => 'preshared_key',
-            'allowed_ips' => 'allowed_ips',
-            'persistent_keepalive' => 'persisten_keepalive',
-            'endpoint' => 'endpoint',
-            'active' => 'active',
-            'created' => 'created_at',
-            'updated' => 'updated_at',
-        ];
-
-        return isset($attributes[$index]) ? $attributes[$index] : null;
-
     }
 }

@@ -53,6 +53,18 @@ class ServerTransformer extends TransformerAbstract
      */
     public function transform(Server $server)
     {
+
+        $links = request()->wantsJson() ?
+            [
+                'index' => route('module.vpn.api.admin.servers.index'),
+            ] :
+            [
+                'index' => route('module.vpn.admin.servers.index'),
+                'store' => route('module.vpn.admin.servers.store'),
+                'update' => route('module.vpn.admin.servers.update', ['server' => $server->id]),
+                'destroy' => route('module.vpn.admin.servers.destroy', ['server' => $server->id]),
+            ];
+
         return [
             'id' => $server->id,
             'name' => $server->name,
@@ -70,30 +82,7 @@ class ServerTransformer extends TransformerAbstract
             'hidden' => $server->hidden ? true : false,
             'created' => $this->format_date($server->created_at),
             'updated' => $this->format_date($server->updated_at),
-            'links' => [
-                'index' => route('module.vpn.api.admin.servers.index'),
-                'store' => route('module.vpn.api.admin.servers.store'),
-                'show' => route('module.vpn.api.admin.servers.show', ['server' => $server->id]),
-                'update' => route('module.vpn.api.admin.servers.update', ['server' => $server->id]),
-                'destroy' => route('module.vpn.api.admin.servers.destroy', ['server' => $server->id]),
-            ],
+            'links' => $links,
         ];
-    }
-
-    /**
-     * Retrieve Original Attributes to filter server
-     *
-     * @param string $index
-     * @return string|null
-     */
-    public static function getOriginalAttributes($index)
-    {
-        $attributes = [
-            'country' => 'country',
-            'port' => 'port',
-            'ip' => 'ip',
-        ];
-
-        return isset($attributes[$index]) ? $attributes[$index] : null;
     }
 }

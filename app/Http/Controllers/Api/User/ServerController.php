@@ -29,20 +29,14 @@ use Vpn\App\Transformers\User\UserServerTransformer;
 class ServerController extends ApiController
 {
     /**
-     * Repository
-     * @var ServerService
-     */
-    public $service;
-
-    /**
      * Construct
      * @param ServerService $serverService
      */
-    public function __construct(ServerService $serverService)
+    public function __construct(protected ServerService $serverService)
     {
         parent::__construct();
-        $this->service = $serverService;
-        $this->middleware('scope:administrator:vpn:full,commerce:vpn-servers:professional,commerce:vpn-servers:advanced,commerce:vpn-servers:intermediate,commerce:vpn-servers:basic')->except('listServers');
+        $this->middleware('scope:administrator:vpn:full,enterprise:vpn-servers:professional,enterprise:vpn-servers:advanced,enterprise:vpn-servers:intermediate,enterprise:vpn-servers:basic')->only('index');
+        $this->middleware('scope:administrator:vpn:full,commerce:vpn:professional,commerce:vpn:advanced,commerce:vpn:intermediate,commerce:vpn:basic')->only('listServers');
     }
 
     /**
@@ -51,7 +45,7 @@ class ServerController extends ApiController
      */
     public function listServers(Request $request)
     {
-        $data = $this->service->listServerForUsers($request);
+        $data = $this->serverService->listServerForUsers($request);
 
         return $this->showAllByBuilder($data, ServerTransformer::class);
     }
@@ -63,81 +57,8 @@ class ServerController extends ApiController
      */
     public function index(Request $request)
     {
-        $data = $this->service->searchForUser($request);
+        $data = $this->serverService->searchForUser($request);
 
         return $this->showAllByBuilder($data, UserServerTransformer::class);
-    }
-
-
-    /**
-     * Create new resource
-     * @param Request $request
-     * @return mixed|\Illuminate\Http\JsonResponse
-     */
-    public function store(Request $request)
-    {
-        $this->validate($request, [
-            'name' => ['required', 'max:150', 'min:3'],
-            'ip' => ['required', 'ipv4', 'unique:vpn_servers,ip'],
-            'url' => ['nullable', 'max:100'],
-            'port' => ['required', 'max:6'],
-            'socks_port' => ['nullable', 'max:6'],
-            'proxy_port' => ['nullable', 'max:6'],
-        ]);
-
-        $data = $this->service->createForUser([
-            'name' => $request->name,
-            'ip' => $request->ip,
-            'url' => $request->url ?? null,
-            'port' => $request->port,
-            'proxy_port' => $request->proxy_port ?? 1080,
-            'socks_port' => $request->socks_port ?? 1090,
-            'user_id' => request()->user()->id,
-            'internal' => false,
-            'hidden' => $request->hidden ?? false,
-        ]);
-
-        return $this->showOne($data, UserServerTransformer::class, 201);
-    }
-
-    /**
-     * Show resource details
-     * @param string $id
-     * @return mixed|\Illuminate\Http\JsonResponse
-     */
-    public function show(string $id)
-    {
-        $data = $this->service->detailsForUser($id);
-
-        return $this->showOne($data, UserServerTransformer::class);
-    }
-
-    /**
-     * Update resource
-     * @param Request $request
-     * @param string $id
-     * @return mixed|\Illuminate\Http\JsonResponse
-     */
-    public function update(Request $request, string $id)
-    {
-        $this->validate($request, [
-            'ip' => ['required', 'ipv4', 'unique:vpn_servers,ip,' . $id]
-        ]);
-
-        $data = $this->service->updateForUser($id, $request->toArray());
-
-        return $this->showOne($data, UserServerTransformer::class);
-    }
-
-    /**
-     * Destroy resource
-     * @param string $id
-     * @return mixed|\Illuminate\Http\JsonResponse
-     */
-    public function destroy(string $id)
-    {
-        $data = $this->service->deleteForUser($id);
-
-        return $this->showOne($data, UserServerTransformer::class);
     }
 }

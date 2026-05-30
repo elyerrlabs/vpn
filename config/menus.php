@@ -44,8 +44,8 @@ return [
             'vpn_servers' => [
                 'id' => 'servers',
                 'name' => 'VNP Servers',
-                'route' => 'module.vpn.admin.servers',
-                'icon' => 'mdi-store-cog',
+                'route' => 'module.vpn.admin.servers.index',
+                'icon' => 'mdi mdi-store-cog',
                 'service' => 'administrator:vpn',
             ],
         ],
@@ -63,9 +63,9 @@ return [
             'vpn_wireguard' => [
                 'id' => 'peers',
                 'name' => 'VPN Wireguard',
-                'route' => 'module.vpn.web.users.peers',
-                'icon' => 'mdi-store-cog',
-                'service' => true,
+                'route' => 'module.vpn.web.users.peers.index',
+                'icon' => 'mdi mdi-vpn',
+                'service' => 'commerce:vpn',
             ],
 
         ],
@@ -86,17 +86,9 @@ return [
             'vpn_servers' => [
                 'id' => 'servers',
                 'name' => 'VNP Servers',
-                'route' => 'module.vpn.admin.servers',
-                'icon' => 'mdi-store-cog',
-                'service' => 'commerce:vpn-servers',
-            ],
-
-            'vpn_wireguard_servers' => [
-                'id' => 'servers',
-                'name' => 'VNP Wireguard Servers',
-                'route' => 'module.vpn.web.users.servers',
-                'icon' => 'mdi-store-cog',
-                'service' => 'commerce:vpn-servers',
+                'route' => 'module.vpn.admin.servers.index',
+                'icon' => 'mdi mdi-store-cog',
+                'service' => 'enterprise:vpn-servers',
             ],
         ],
 
@@ -118,7 +110,8 @@ return [
                 'icon'    => 'mdi-cog',
                 'service' => 'user:settings',
             ],
-            */],
+            */
+        ],
 
 
         'admin_settings' => [
@@ -126,8 +119,8 @@ return [
             'vpn-settings' => [
                 'id' => 'vpn-settings',
                 'name' => 'VPN Settings',
-                'route' => 'module.vpn.admin.settings.general',
-                'icon' => 'mdi-cog',
+                'route' => 'module.vpn.admin.servers.index',
+                'icon' => 'mdi mdi-cog',
                 'service' => 'administrator:settings',
             ],
 
@@ -158,23 +151,15 @@ return [
             'service' => true,
             'position' => 8,
         ],
-        */],
+        */
+    ],
 
     'vpn_admin_routes' => [
         [
-            'id' => 'dashboard',
-            'name' => 'Dashboard',
-            'route' => 'module.vpn.admin.admin',
-            'icon' => 'mdi-store-cog',
-            'service' => 'administrator:vpn',
-            'position' => 1,
-        ],
-
-        [
             'id' => 'servers',
             'name' => 'Servers',
-            'route' => 'module.vpn.admin.servers',
-            'icon' => 'mdi-store-cog',
+            'route' => 'module.vpn.admin.servers.index',
+            'icon' => 'mdi mdi-store-cog',
             'service' => 'administrator:vpn',
             'position' => 1,
         ],
@@ -182,10 +167,10 @@ return [
         [
             'id' => 'wireguard',
             'name' => 'Wireguard',
-            'route' => 'module.vpn.admin.wireguard',
-            'icon' => 'mdi-store-cog',
+            'route' => 'module.vpn.admin.wireguards.index',
+            'icon' => 'mdi mdi-store-cog',
             'service' => 'administrator:vpn',
-            'position' => 1,
+            'position' => 2,
         ],
     ],
 
@@ -193,25 +178,26 @@ return [
         [
             'id' => 'servers',
             'name' => 'Servers',
-            'route' => 'module.vpn.web.users.servers',
-            'icon' => 'mdi-store-cog',
-            'service' => 'commerce:vpn-servers',
+            'route' => 'module.vpn.web.users.servers.index',
+            'icon' => 'mdi mdi-store-cog',
+            'service' => 'enterprise:vpn-servers',
             'position' => 1,
         ],
 
         [
             'id' => 'wireguard',
             'name' => 'Wireguard',
-            'route' => 'module.vpn.web.users.wireguard',
-            'icon' => 'mdi-store-cog',
-            'service' => 'commerce:vpn-servers',
+            'route' => 'module.vpn.web.users.wireguards.index',
+            'icon' => 'mdi mdi-store-cog',
+            'service' => 'enterprise:vpn-servers',
             'position' => 2,
         ],
         [
             'id' => 'peers',
             'name' => 'Wireguard Generator',
-            'route' => 'module.vpn.web.users.peers',
-            'icon' => 'mdi-store-cog',
+            'route' => 'module.vpn.web.users.peers.index',
+            'icon' => 'mdi mdi-store-cog',
+            'service' => 'commerce:vpn',
             'position' => 3,
         ],
     ]

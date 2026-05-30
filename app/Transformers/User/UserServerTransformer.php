@@ -53,6 +53,15 @@ class UserServerTransformer extends TransformerAbstract
      */
     public function transform(Server $server)
     {
+
+        $links = request()->wantsJson() ? [] :
+            [
+                'index' => route('module.vpn.web.users.servers.index'),
+                'store' => route('module.vpn.web.users.servers.store'),
+                'update' => route('module.vpn.web.users.servers.update', ['server' => $server->id]),
+                'destroy' => route('module.vpn.web.users.servers.destroy', ['server' => $server->id]),
+            ];
+
         return [
             'id' => $server->id,
             'name' => $server->name,
@@ -70,13 +79,7 @@ class UserServerTransformer extends TransformerAbstract
             'hidden' => $server->hidden ? true : false,
             'created' => $this->format_date($server->created_at),
             'updated' => $this->format_date($server->updated_at),
-            'links' => [
-                'index' => route('module.vpn.api.users.servers.index'),
-                'store' => route('module.vpn.api.users.servers.store'),
-                'show' => route('module.vpn.api.users.servers.show', ['server' => $server->id]),
-                'update' => route('module.vpn.api.users.servers.update', ['server' => $server->id]),
-                'destroy' => route('module.vpn.api.users.servers.destroy', ['server' => $server->id]),
-            ],
+            'links' => $links,
         ];
     }
 

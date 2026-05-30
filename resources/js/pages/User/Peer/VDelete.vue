@@ -266,7 +266,7 @@
             <p class="text-xs text-gray-500 dark:text-gray-400">
               {{
                 __(
-                  "Tip: Create a new device first if you need uninterrupted VPN access"
+                  "Tip: Create a new device first if you need uninterrupted VPN access",
                 )
               }}
             </p>
@@ -328,19 +328,21 @@ const deleteDevice = async () => {
       $notify.success(
         __("Device deleted"),
         __(
-          "Your VPN configuration has been removed. Remember to delete it from your WireGuard app too."
-        )
+          "Your VPN configuration has been removed. Remember to delete it from your WireGuard app too.",
+        ),
       );
       emits("deleted");
       closeModal();
     }
   } catch (error) {
+    console.log(error);
+
     if (error?.response?.data?.message) {
       $notify.error(__("Delete failed"), error.response.data.message);
     } else {
       $notify.error(
         __("Delete failed"),
-        __("Could not delete the device. Please try again.")
+        __("Could not delete the device. Please try again."),
       );
     }
 

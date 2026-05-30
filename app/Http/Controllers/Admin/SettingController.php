@@ -1,6 +1,6 @@
 <?php
 
-namespace Vpn\App\Http\Controllers\Web;
+namespace Vpn\App\Http\Controllers\Admin;
 
 
 final class SettingController extends \App\Http\Controllers\Web\Admin\Setting\SettingController
