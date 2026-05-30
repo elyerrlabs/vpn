@@ -36,8 +36,25 @@ class WireguardController extends ApiController
     public function __construct(protected WireguardService $wireguardService)
     {
         parent::__construct();
-        $this->middleware('scope:administrator:vpn:full,enterprise:vpn-servers:professional,enterprise:vpn-servers:advanced,enterprise:vpn-servers:intermediate,enterprise:vpn-servers:basic')->only('index');
-        $this->middleware('scope:administrator:vpn:full,commerce:vpn:professional,commerce:vpn:advanced,commerce:vpn:intermediate,commerce:vpn:basic')->only('listWireguardServersForUser');
+
+        $commerceScopes = [
+            'administrator:vpn:full',
+            'commerce:vpn:professional',
+            'commerce:vpn:advanced',
+            'commerce:vpn:intermediate',
+            'commerce:vpn:basic'
+        ];
+        $this->middleware('scope:' . implode($commerceScopes))->only('listWireguardServersForUser');
+
+
+        $entrepriseScopes = [
+            'administrator:vpn:full',
+            'enterprise:vpn-servers:professional',
+            'enterprise:vpn-servers:advanced',
+            'enterprise:vpn-servers:intermediate',
+            'enterprise:vpn-servers:basic'
+        ];
+        $this->middleware('scope:' . implode(',', $entrepriseScopes))->only('index');
     }
 
     /**

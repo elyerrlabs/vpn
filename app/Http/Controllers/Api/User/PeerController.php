@@ -34,7 +34,16 @@ class PeerController extends ApiController
     public function __construct(protected PeerService $peerService)
     {
         parent::__construct();
-        $this->middleware('scope:administrator:vpn:full,commerce:vpn:professional,commerce:vpn:advanced,commerce:vpn:intermediate,commerce:vpn:basic');
+
+        $commerceScopes = [
+            'administrator:vpn:full',
+            'commerce:vpn:professional',
+            'commerce:vpn:advanced',
+            'commerce:vpn:intermediate',
+            'commerce:vpn:basic'
+        ];
+
+        $this->middleware('scope:' . implode(',', $commerceScopes));
     }
 
     /**

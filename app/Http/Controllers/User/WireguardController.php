@@ -18,7 +18,16 @@ final class WireguardController extends WebController
     public function __construct(protected WireguardService $wireguardService)
     {
         parent::__construct();
-        $this->middleware('userCanAny:administrator:vpn:full,enterprise:vpn-servers:professional,enterprise:vpn-servers:advanced,enterprise:vpn-servers:intermediate,enterprise:vpn-servers:basic');
+
+        $scopes = [
+            'administrator:vpn:full',
+            'enterprise:vpn-servers:professional',
+            'enterprise:vpn-servers:advanced',
+            'enterprise:vpn-servers:intermediate',
+            'enterprise:vpn-servers:basic'
+        ];
+
+        $this->middleware('userCanAny:' . implode(',', $scopes));
     }
 
     /**

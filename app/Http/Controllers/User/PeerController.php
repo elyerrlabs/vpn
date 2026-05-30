@@ -10,7 +10,16 @@ final class PeerController extends WebController
     public function __construct()
     {
         parent::__construct();
-        $this->middleware('userCanAny:administrator:vpn:full,commerce:vpn:professional,commerce:vpn:advanced,commerce:vpn:intermediate,commerce:vpn:basic');
+
+        $scopes = [
+            'administrator:vpn:full',
+            'commerce:vpn:professional',
+            'commerce:vpn:advanced',
+            'commerce:vpn:intermediate',
+            'commerce:vpn:basic'
+        ];
+
+        $this->middleware('userCanAny:' . implode(',', $scopes));
     }
 
     /**

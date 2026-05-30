@@ -17,7 +17,16 @@ final class ServerController extends WebController
     public function __construct(protected ServerService $serverService)
     {
         parent::__construct();
-        $this->middleware('userCanAny:administrator:vpn:full,enterprise:vpn-servers:professional,enterprise:vpn-servers:advanced,enterprise:vpn-servers:intermediate,enterprise:vpn-servers:basic');
+
+        $scopes = [
+            'administrator:vpn:full',
+            'enterprise:vpn-servers:professional',
+            'enterprise:vpn-servers:advanced',
+            'enterprise:vpn-servers:intermediate',
+            'enterprise:vpn-servers:basic'
+        ];
+
+        $this->middleware('userCanAny:' . implode(',', $scopes));
     }
 
     /**
