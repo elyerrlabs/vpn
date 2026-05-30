@@ -86,7 +86,7 @@ return [
             'vpn_servers' => [
                 'id' => 'servers',
                 'name' => 'VNP Servers',
-                'route' => 'module.vpn.admin.servers.index',
+                'route' => 'module.vpn.web.users.servers.index',
                 'icon' => 'mdi mdi-store-cog',
                 'service' => 'enterprise:vpn-servers',
             ],
