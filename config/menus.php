@@ -119,7 +119,7 @@ return [
             'vpn-settings' => [
                 'id' => 'vpn-settings',
                 'name' => 'VPN Settings',
-                'route' => 'module.vpn.admin.servers.index',
+                'route' => 'module.vpn.admin.settings.general',
                 'icon' => 'mdi mdi-cog',
                 'service' => 'administrator:settings',
             ],
