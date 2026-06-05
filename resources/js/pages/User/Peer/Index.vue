@@ -140,10 +140,10 @@
 
 <script setup>
 import { usePage } from "@inertiajs/vue3";
-import VGeneralLayout from "@vpn/components/VGeneralLayout.vue";
-import VPagination from "@vpn/components/VPaginate.vue";
-import VTable from "@vpn/components/VTable.vue";
-import VHead from "@vpn/components/VHead.vue";
+import VGeneralLayout from "@/components/VGeneralLayout.vue";
+import VPagination from "@/components/VPaginate.vue";
+import VTable from "@/components/VTable.vue";
+import VHead from "@/components/VHead.vue";
 import VDelete from "./VDelete.vue";
 import VCreate from "./VCreate.vue";
 import { ref, onMounted } from "vue";

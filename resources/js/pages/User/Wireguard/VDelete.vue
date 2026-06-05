@@ -160,8 +160,8 @@
 </template>
 
 <script setup>
-import VModal from "@vpn/components/VModal.vue";
-import VButton from "@vpn/components/VButton.vue";
+import VModal from "@/components/VModal.vue";
+import VButton from "@/components/VButton.vue";
 import { ref, computed, watch } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { useForm } from "@inertiajs/vue3";

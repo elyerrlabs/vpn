@@ -1,8 +1,8 @@
 import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
-import { $notify } from "@vpn/config/notify.js";
-import { $server } from "@vpn/config/axios.js";
-import { setupI18n, __ } from "@vpn/config/locale.js";
+import { $notify } from "@/config/notify.js";
+import { $server } from "@/config/axios.js";
+import { setupI18n, __ } from "@/config/locale.js";
 
 setupI18n();
 window.__ = __;
@@ -16,6 +16,8 @@ createInertiaApp({
     const app = createApp({ render: () => h(App, props) });
 
     app.config.globalProperties.__ = __;
+    app.config.globalProperties.$server = $server;
+    app.config.globalProperties.$notify = $notify;
 
     app.use(plugin);
     app.mount(el);

@@ -92,7 +92,7 @@ defineOptions({
 });
 
 import { computed, onMounted, ref, useAttrs, watch } from "vue";
-import VError from "@vpn/components/VError.vue";
+import VError from "@/components/VError.vue";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 

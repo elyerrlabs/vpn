@@ -70,8 +70,8 @@
 <script setup>
 import { usePage } from "@inertiajs/vue3";
 import { ref, computed } from "vue";
-import VModal from "@vpn/components/VModal.vue";
-import VButton from "@vpn/components/VButton.vue";
+import VModal from "@/components/VModal.vue";
+import VButton from "@/components/VButton.vue";
 import { useForm } from "@inertiajs/vue3";
 
 const page = usePage();

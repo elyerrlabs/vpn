@@ -114,11 +114,11 @@
   </div>
 </template>
 <script setup>
-import VModal from "@vpn/components/VModal.vue";
-import VInput from "@vpn/components/VInput.vue";
-import VButton from "@vpn/components/VButton.vue";
-import VSwitch from "@vpn/components/VSwitch.vue";
-import VSelect from "@vpn/components/VSelect.vue";
+import VModal from "@/components/VModal.vue";
+import VInput from "@/components/VInput.vue";
+import VButton from "@/components/VButton.vue";
+import VSwitch from "@/components/VSwitch.vue";
+import VSelect from "@/components/VSelect.vue";
 import { ref, onMounted } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { useForm } from "@inertiajs/vue3";

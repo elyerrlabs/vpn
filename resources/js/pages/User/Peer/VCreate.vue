@@ -599,11 +599,11 @@
 </template>
 
 <script setup>
-import VModal from "@vpn/components/VModal.vue";
-import VInput from "@vpn/components/VInput.vue";
-import VSelect from "@vpn/components/VSelect.vue";
-import VButton from "@vpn/components/VButton.vue";
-import VHead from "@vpn/components/VHead.vue";
+import VModal from "@/components/VModal.vue";
+import VInput from "@/components/VInput.vue";
+import VSelect from "@/components/VSelect.vue";
+import VButton from "@/components/VButton.vue";
+import VHead from "@/components/VHead.vue";
 import { ref, computed, nextTick, onUnmounted } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import QRious from "qrious";

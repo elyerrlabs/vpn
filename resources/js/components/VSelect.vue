@@ -358,7 +358,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 </template>
 
 <script>
-import VError from "@vpn/components/VError.vue";
+import VError from "@/components/VError.vue";
 
 export default {
     name: "VSelect",

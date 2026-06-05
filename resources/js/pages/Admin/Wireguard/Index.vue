@@ -297,14 +297,14 @@
 
 <script setup>
 import { usePage } from "@inertiajs/vue3";
-import VGeneralLayout from "@vpn/components/VGeneralLayout.vue";
-import VPagination from "@vpn/components/VPaginate.vue";
-import VHead from "@vpn/components/VHead.vue";
-import VTable from "@vpn/components/VTable.vue";
-import VInput from "@vpn/components/VInput.vue";
-import VButton from "@vpn/components/VButton.vue";
-import VSwitch from "@vpn/components/VSwitch.vue";
-import VSelect from "@vpn/components/VSelect.vue";
+import VGeneralLayout from "@/components/VGeneralLayout.vue";
+import VPagination from "@/components/VPaginate.vue";
+import VHead from "@/components/VHead.vue";
+import VTable from "@/components/VTable.vue";
+import VInput from "@/components/VInput.vue";
+import VButton from "@/components/VButton.vue";
+import VSwitch from "@/components/VSwitch.vue";
+import VSelect from "@/components/VSelect.vue";
 import { ref, onMounted, computed } from "vue";
 import VCreate from "./VCreate.vue";
 import VDelete from "./VDelete.vue";

@@ -132,7 +132,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 <script setup>
 import { ref, watch, computed, nextTick } from "vue";
-import VError from "@vpn/components/VError.vue";
+import VError from "@/components/VError.vue";
 
 const props = defineProps({
     modelValue: {

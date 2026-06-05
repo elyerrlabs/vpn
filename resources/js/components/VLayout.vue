@@ -80,9 +80,9 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 <script setup>
 import { ref, onMounted } from "vue";
-import VNotification from "@vpn/components/VNotification.vue";
-import VProfile from "@vpn/components/VProfile.vue";
-import VTheme from "@vpn/components/VTheme.vue";
+import VNotification from "@/components/VNotification.vue";
+import VProfile from "@/components/VProfile.vue";
+import VTheme from "@/components/VTheme.vue";
 import { usePage } from "@inertiajs/vue3"; 
 
 const sidebarVisible = ref(true);

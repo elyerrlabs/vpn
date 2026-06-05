@@ -57,8 +57,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 </template>
 
 <script setup>
-import VLayout from "@vpn/components/VLayout.vue";
-import VItemMenu from "@vpn/components/VItemMenu.vue";
+import VLayout from "@/components/VLayout.vue";
+import VItemMenu from "@/components/VItemMenu.vue";
 import { usePage } from "@inertiajs/vue3";
 
 const page = usePage();

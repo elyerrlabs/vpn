@@ -278,7 +278,7 @@
 </template>
 
 <script setup>
-import VModal from "@vpn/components/VModal.vue";
+import VModal from "@/components/VModal.vue";
 import { ref, computed } from "vue";
 import { usePage } from "@inertiajs/vue3";
 
