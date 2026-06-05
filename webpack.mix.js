@@ -4,8 +4,8 @@ const path = require('path');
 mix.webpackConfig({
     resolve: {
         alias: {
-            "@vpn": path.resolve(__dirname, "resources/js"),
-            "@vpnCss": path.resolve(__dirname, "resources/css")
+            "@": path.resolve(__dirname, "resources/js"),
+            "@css": path.resolve(__dirname, "resources/css")
         },
     },
     stats: {
