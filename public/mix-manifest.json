@@ -1,12 +1,4 @@
 {
-    "/js/app.js": "/js/app.js?id=7b55253e2e7a09aa3a0c326b99265ded",
-    "/css/app.css": "/css/app.css?id=94bd48fbcfaa701a3d29fd90a0dc8d1c",
-    "/fonts/vendor/@fortawesome/fontawesome-free/webfa-brands-400.woff2?1c5c7716b05754cb4eab190e5ed2838c": "/fonts/vendor/@fortawesome/fontawesome-free/webfa-brands-400.woff2?1c5c7716b05754cb4eab190e5ed2838c?id=a2bd65836e7e0a11022ab245fa729a46",
-    "/fonts/vendor/@fortawesome/fontawesome-free/webfa-regular-400.woff2?6f05ca9ab7b5345dbc07d1339a8b593b": "/fonts/vendor/@fortawesome/fontawesome-free/webfa-regular-400.woff2?6f05ca9ab7b5345dbc07d1339a8b593b?id=361c2c3c1e1e4d82f04d825edaa07550",
-    "/fonts/vendor/@fortawesome/fontawesome-free/webfa-solid-900.woff2?8ae0d37556ff1e685de2acb2a675ebaf": "/fonts/vendor/@fortawesome/fontawesome-free/webfa-solid-900.woff2?8ae0d37556ff1e685de2acb2a675ebaf?id=151d5eddd0b377f0c7f8df5d8515d654",
-    "/fonts/vendor/@fortawesome/fontawesome-free/webfa-v4compatibility.woff2?e4340c52a50e727c6afaccbdaae686e2": "/fonts/vendor/@fortawesome/fontawesome-free/webfa-v4compatibility.woff2?e4340c52a50e727c6afaccbdaae686e2?id=d642cac2f6fc1ec00aa8c50956f65b74",
-    "/fonts/vendor/@mdi/materialdesignicons-webfont.eot?2146c3c82b553977abc7c824eb453634": "/fonts/vendor/@mdi/materialdesignicons-webfont.eot?2146c3c82b553977abc7c824eb453634?id=a1e56f90801b53f7bb04b51750af8fe2",
-    "/fonts/vendor/@mdi/materialdesignicons-webfont.woff2?ec024da790d2972da002c9e3f0625ba5": "/fonts/vendor/@mdi/materialdesignicons-webfont.woff2?ec024da790d2972da002c9e3f0625ba5?id=0530681c9c38837cee97d33e0348c063",
-    "/fonts/vendor/@mdi/materialdesignicons-webfont.woff?e55a20c80650829ec5fdd868e583f64b": "/fonts/vendor/@mdi/materialdesignicons-webfont.woff?e55a20c80650829ec5fdd868e583f64b?id=5ea046cf34dab016c140b170c136570c",
-    "/fonts/vendor/@mdi/materialdesignicons-webfont.ttf?1fcc36272ea3e53d0031fbfedffd88cc": "/fonts/vendor/@mdi/materialdesignicons-webfont.ttf?1fcc36272ea3e53d0031fbfedffd88cc?id=bd0aa704f8f03bc198bada2abafe4862"
+    "/js/app.js": "/js/app.js?id=046cba1075672fe5f97fc4a5e65768df",
+    "/css/app.css": "/css/app.css?id=46243673d0f76140a6c1db5a53455c49"
 }

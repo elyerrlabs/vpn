@@ -2,8 +2,8 @@
  * @license MIT */
 
 /*!
-  * shared v11.2.8
-  * (c) 2025 kazuya kawaguchi
+  * shared v11.4.5
+  * (c) 2026 kazuya kawaguchi
   * Released under the MIT License.
   */
 
@@ -19,19 +19,19 @@
 /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */
 
 /**
-* @vue/runtime-core v3.5.26
+* @vue/runtime-core v3.5.35
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
 
 /**
-* @vue/runtime-dom v3.5.26
+* @vue/runtime-dom v3.5.35
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
 
 /**
-* @vue/shared v3.5.26
+* @vue/shared v3.5.35
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
