@@ -1,5 +1,6 @@
 const mix = require('laravel-mix');
 const path = require('path');
+const fixCss = require('./build-fix');
 
 mix.webpackConfig({
     resolve: {
@@ -11,7 +12,15 @@ mix.webpackConfig({
     stats: {
         children: false,
     },
-    plugins: [],
+    plugins: [
+        {
+            apply(compiler) {
+                compiler.hooks.done.tap('FixCssPlugin', () => {
+                    fixCss();
+                });
+            }
+        }
+    ]
 })
 
 mix.js('resources/js/app.js', 'js/app.js').version()

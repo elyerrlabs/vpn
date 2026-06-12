@@ -1,12 +1,13 @@
 <?php
 namespace Vpn\App\Providers;
 
-use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Route;
 use Elyerr\ApiResponse\Exceptions\ReportError;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider as Provider;
+use Illuminate\Support\Str;
 
 class ServiceProvider extends Provider
 {
@@ -62,13 +63,12 @@ class ServiceProvider extends Provider
         if (file_exists($this->vendorAutoload)) {
             require $this->vendorAutoload;
 
-            $this->loadViewsFrom($this->views, ucfirst($this->getModuleName()));
+            $this->loadViewsFrom($this->views, $this->generateViewPrefix());
             $this->registerRoutes();
             $this->registerMiddlewares();
             $this->registerMigrations();
             $this->registerConfigs();
             $this->registerBladeComponents();
-            $this->loadJsonTranslationsFrom(__DIR__ . '/../../lang');
         }
     }
 
@@ -90,7 +90,7 @@ class ServiceProvider extends Provider
     private function decodeComposer()
     {
         if (!file_exists($this->composerFile)) {
-            throw new \Exception(__('composer.json not found'));
+            throw new \Exception("composer.json not found");
         }
         return json_decode(file_get_contents($this->composerFile));
     }
@@ -136,8 +136,8 @@ class ServiceProvider extends Provider
 
             $dirname = basename($dir);
 
-            if (strcasecmp($dirname, $moduleName) === 0) {
-                return $dir;
+            if (strcasecmp($dirname, Str::kebab($moduleName)) === 0) {
+                return "third-party/" . Str::kebab($moduleName);
             }
         }
 
