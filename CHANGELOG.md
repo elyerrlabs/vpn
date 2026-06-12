@@ -2,9 +2,46 @@
 
 All notable changes to this project will be documented in this file.
 
+# Changelog
+
+# [v2.0.0]
+
+### Added
+
+- Added compatibility with **OAuth2 Passport Server v7+**.
+- Added updated module bootstrap support required by the latest **Elymod ecosystem**.
+- Added `build-fix.js` script to properly handle and fix asset compilation for modules.
+
+### Changed
+
+- Updated `composer.json` dependencies to align with the current **Elymod** and **OAuth2 Passport Server v7** ecosystem.
+- Updated frontend dependencies in `package.json` to supported versions.
+- Adjusted `webpack.mix.js` configuration to match the latest **Laravel Mix module build environment**.
+- Updated the module `ServiceProvider` implementation to support **OAuth2 Passport Server v7+** and the latest module loading workflow.
+- Improved asset compilation compatibility for fonts, icons, and third-party resources.
+
 ---
 
-# [v1.0.1] - 2024-06-17
+### Migration Notes
+
+Modules created with older Elymod versions should be updated to ensure compatibility with **OAuth2 Passport Server v7+**:
+
+- Update `composer.json` dependencies.
+- Update `package.json` dependencies.
+- Adjust `webpack.mix.js` using the latest stub version.
+- Replace the module `ServiceProvider` with the version provided in the latest Elymod stubs.
+- Ensure `build-fix.js` is included and executed when compiling module assets.
+- Rebuild frontend assets after updating dependencies.
+
+---
+
+### Summary
+
+This update maintains **Laravel Mix** support and introduces required fixes for module asset compilation, ensuring full compatibility with **OAuth2 Passport Server v7+** and newer Elymod releases.
+
+---
+
+# [v1.0.1]
 
 ## ✨ Features
 
@@ -14,17 +51,17 @@ Added server administration support for users and administrators.
 
 #### Included
 
-* Create servers
-* Update servers
-* Delete servers
-* List servers
-* Plan validation for servers (users only, administrators excluded)
+- Create servers
+- Update servers
+- Delete servers
+- List servers
+- Plan validation for servers (users only, administrators excluded)
 
 #### Access Zones
 
-* Added a dedicated server management area for administrators
-* Added a separate privileged management area for users
-* Isolated administrator and user server management interfaces
+- Added a dedicated server management area for administrators
+- Added a separate privileged management area for users
+- Isolated administrator and user server management interfaces
 
 ---
 
@@ -34,17 +71,17 @@ Added WireGuard VPN management support for users and administrators.
 
 #### Included
 
-* Create VPN instances
-* Update VPN instances
-* Delete VPN instances
-* List VPN instances
-* Plan validation for servers (users only, administrators excluded)
+- Create VPN instances
+- Update VPN instances
+- Delete VPN instances
+- List VPN instances
+- Plan validation for servers (users only, administrators excluded)
 
 #### Access Zones
 
-* Added a dedicated WireGuard management area for administrators
-* Added a separate privileged WireGuard area for users
-* Isolated administrator and user VPN management interfaces
+- Added a dedicated WireGuard management area for administrators
+- Added a separate privileged WireGuard area for users
+- Isolated administrator and user VPN management interfaces
 
 ---
 
@@ -54,10 +91,10 @@ Added WireGuard peer management support.
 
 #### Included
 
-* Create peers
-* Delete peers
-* List peers
-* Plan validation for all users, including administrators
+- Create peers
+- Delete peers
+- List peers
+- Plan validation for all users, including administrators
 
 ---
 
@@ -67,16 +104,14 @@ Updated authentication scopes for API and web support.
 
 #### Changes
 
-* Added support for:
+- Added support for:
+  - API scopes
+  - Web scopes
+  - Public scopes
 
-  * API scopes
-  * Web scopes
-  * Public scopes
-
-* `commerce:vpn:basic` is now the default scope for:
-
-  * API keys
-  * Web authentication
-  * Public user access
+- `commerce:vpn:basic` is now the default scope for:
+  - API keys
+  - Web authentication
+  - Public user access
 
 ---
