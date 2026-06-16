@@ -39,7 +39,7 @@ final class ServerController extends WebController
         $data = $this->serverService->searchForUser($request)->paginate($request->input('per_page', 15));
 
         return Inertia::render('User/Server/Index', [
-            'data' => $this->transformCollection($data, UserServerTransformer::class),
+            'data' => transformCollection($data, UserServerTransformer::class),
             'menus' => resolveInertiaRoutes(config('menus.vpn_user_routes')),
             'routes' => [
                 'servers' => route('module.vpn.web.users.servers.index'),

@@ -50,7 +50,7 @@ final class ServerController extends WebController
         $data = $this->serverService->search($request)->paginate($request->input('per_page', 15));
 
         return Inertia::render('Admin/Server/Index', [
-            'data' => $this->transformCollection($data, ServerTransformer::class),
+            'data' => transformCollection($data, ServerTransformer::class),
             'menus' => resolveInertiaRoutes(config('menus.vpn_admin_routes')),
             'routes' => [
                 'servers' => route('module.vpn.admin.servers.index'),

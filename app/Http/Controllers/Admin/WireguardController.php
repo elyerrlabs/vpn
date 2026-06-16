@@ -51,7 +51,7 @@ final class WireguardController extends WebController
         $data = $this->wireguardService->search($request)->paginate($request->input('per_page', 15));
 
         return Inertia::render('Admin/Wireguard/Index', [
-            'data' => $this->transformCollection($data, WireguardTransformer::class),
+            'data' => transformCollection($data, WireguardTransformer::class),
             'menus' => resolveInertiaRoutes(config('menus.vpn_admin_routes')),
             'routes' => [
                 'wireguard' => route('module.vpn.admin.wireguards.index')
