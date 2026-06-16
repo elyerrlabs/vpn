@@ -25,11 +25,11 @@
   },
   "require": {
     "grpc/grpc": "^1.74",
-    "google/protobuf": "^4.33"
+    "google/protobuf": "^4.33",
+    "elyerr/api-response": "v1.0.28"
   },
   "require-dev": {
-    "elyerr/laravel-runtime": "^1.0", 
-    "elyerr/api-response": "^1.0",
+    "elyerr/laravel-runtime": "^1.0",
     "laravel/framework": "^12.44"
   },
   "scripts": {
