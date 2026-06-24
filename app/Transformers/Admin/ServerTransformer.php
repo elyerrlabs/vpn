@@ -3,7 +3,6 @@
 namespace Vpn\App\Transformers\Admin;
 
 use Vpn\App\Models\Server;
-use Elyerr\ApiResponse\Assets\Asset;
 use League\Fractal\TransformerAbstract;
 
 /*
@@ -26,8 +25,6 @@ use League\Fractal\TransformerAbstract;
 
 class ServerTransformer extends TransformerAbstract
 {
-
-    use Asset;
     /**
      * List of resources to automatically include
      *

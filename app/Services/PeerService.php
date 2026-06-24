@@ -2,9 +2,7 @@
 
 namespace Vpn\App\Services;
 
-use Vpn\App\Wrapper\Core;
 use Illuminate\Http\Request;
-use Vpn\App\Models\Wireguard;
 use Vpn\App\Contracts\Service;
 use Illuminate\Support\Facades\DB;
 use Vpn\App\Repositories\PeerRepository;
@@ -282,7 +280,7 @@ final class PeerService extends MasterService implements Service
         $model = $this->repository->find($id);
 
         $this->core($model->wireguard);
-        
+
     }
 
 

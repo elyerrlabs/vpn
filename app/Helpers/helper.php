@@ -23,7 +23,7 @@ if (!function_exists('location')) {
     {
         $url = "http://ip-api.com/json/{$ip}?fields=status,country,countryCode,regionName,city,query";
 
-        $response = Http::get($url);
+        $response = \Illuminate\Support\Facades\Http::get($url);
 
         if ($response->successful() && $response['status'] === 'success') {
             return [

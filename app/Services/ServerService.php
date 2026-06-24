@@ -2,7 +2,6 @@
 
 namespace Vpn\App\Services;
 
-use Elyerr\ApiResponse\Assets\Asset;
 use Vpn\App\Services\MasterService;
 use Elyerr\ApiResponse\Exceptions\ReportError;
 use Illuminate\Http\Request;
@@ -29,7 +28,6 @@ use Vpn\App\Repositories\ServerRepository;
 
 final class ServerService extends MasterService implements Service
 {
-    use Asset;
 
     /**
      * Repository
@@ -174,7 +172,7 @@ final class ServerService extends MasterService implements Service
             throw new ReportError(__('Server can not be found'), 404);
         }
 
-        if ($model->internal && $this->is_different($model->name, $data['name'])) {
+        if ($model->internal && strtolower($model->name) != strtolower($data['name'])) {
             $model->name = $data['name'];
         }
 
@@ -222,7 +220,7 @@ final class ServerService extends MasterService implements Service
             throw new ReportError(__('Server can not be found'), 404);
         }
 
-        if ($this->is_different($model->name, $data['name'])) {
+        if (strtolower($model->name) != strtolower($data['name'])) {
             $model->name = $data['name'];
         }
 

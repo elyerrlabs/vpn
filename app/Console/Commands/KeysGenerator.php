@@ -3,6 +3,8 @@
 namespace Vpn\App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 
 /*
  * VPN - Server-side software for centralized administration and node management of a VPN service.
@@ -22,22 +24,10 @@ use Illuminate\Console\Command;
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#[Signature('vpn:module:keys:generator {--force : Overwrite existing keys without confirmation}')]
+#[Description('Generate keys')]
 class KeysGenerator extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = "keys:generator {--force : Overwrite existing keys without confirmation}";
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = "Generate keys";
-
     /**
      * Execute the console command.
      */

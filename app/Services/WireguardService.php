@@ -2,13 +2,10 @@
 
 namespace Vpn\App\Services;
 
-use Vpn\App\Wrapper\Core;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Vpn\App\Models\Wireguard;
-use Vpn\App\Contracts\Service;
 use Illuminate\Support\Facades\DB;
-use Elyerr\ApiResponse\Assets\Asset;
 use Illuminate\Database\QueryException;
 use Vpn\App\Repositories\PeerRepository;
 use Vpn\App\Repositories\WireguardRepository;
@@ -34,8 +31,6 @@ use Elyerr\ApiResponse\Exceptions\ReportError;
 
 final class WireguardService extends MasterService
 {
-    use Asset;
-
     /**
      * Wireguard repository
      * @var WireguardRepository
@@ -225,7 +220,7 @@ final class WireguardService extends MasterService
 
         throw_if(
             $nets->count() >= 10,
-            new ReportError(__('The limit has been exceeded'), 403)
+            fn() => new ReportError(__('The limit has been exceeded'), 403)
         );
 
         $last_subnet = $nets->latest()->first();
@@ -237,7 +232,7 @@ final class WireguardService extends MasterService
         //Limit to 10 subnets to create by server
         throw_if(
             $nets->count() >= 10,
-            new ReportError(__('The limit has been exceeded'), 403)
+            fn() => new ReportError(__('The limit has been exceeded'), 403)
         );
 
         // Filter by slug and server
@@ -249,7 +244,7 @@ final class WireguardService extends MasterService
         // Deny creation if it the name already exists
         throw_if(
             $exists,
-            new ReportError(__('The provided slug is already assigned to the current server'), 403)
+            fn() => new ReportError(__('The provided slug is already assigned to the current server'), 403)
         );
 
         $model = DB::transaction(function () use ($data, $subnet, $gateway) {
@@ -343,7 +338,7 @@ final class WireguardService extends MasterService
 
         throw_if(
             !$forUser && !$model->server->internal,
-            new ReportError(__('This server is provided by a third party and cannot be updated.'), 403)
+            fn() => new ReportError(__('This server is provided by a third party and cannot be updated.'), 403)
         );
 
         $model->fill($data);
@@ -386,7 +381,7 @@ final class WireguardService extends MasterService
 
         throw_if(
             $model->mounted,
-            new ReportError(__('Unable to delete this resource because is active. Please shutdown and try again.'), 403)
+            fn() => new ReportError(__('Unable to delete this resource because is active. Please shutdown and try again.'), 403)
         );
 
         DB::transaction(function () use ($model) {
@@ -419,9 +414,9 @@ final class WireguardService extends MasterService
                 fn($sub) => $sub->where('user_id', request()->user()->id)
             ))->first();
 
-        throw_if(empty($model), new ReportError(__('The WireGuard server can not be found'), 404));
+        throw_if(empty($model), fn() => new ReportError(__('The WireGuard server can not be found'), 404));
 
-        throw_if(!$model->mounted, new ReportError(__('The WireGuard server is already stopped'), 403));
+        throw_if(!$model->mounted, fn() => new ReportError(__('The WireGuard server is already stopped'), 403));
 
         if ($model->mounted) {
             DB::transaction(function () use ($model) {
@@ -459,9 +454,9 @@ final class WireguardService extends MasterService
                 )
             )->first();
 
-        throw_if(empty($model), new ReportError(__('The WireGuard server can not be found'), 404));
+        throw_if(empty($model), fn() => new ReportError(__('The WireGuard server can not be found'), 404));
 
-        throw_if($model->mounted, new ReportError(__('The WireGuard server is already started'), 403));
+        throw_if($model->mounted, fn() => new ReportError(__('The WireGuard server is already started'), 403));
 
         if (!$model->mounted) {
             DB::transaction(function () use ($model) {

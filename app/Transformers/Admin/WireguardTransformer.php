@@ -2,7 +2,6 @@
 
 namespace Vpn\App\Transformers\Admin;
 
-use Elyerr\ApiResponse\Assets\Asset;
 use League\Fractal\TransformerAbstract;
 use Vpn\App\Models\Wireguard;
 
@@ -26,7 +25,6 @@ use Vpn\App\Models\Wireguard;
 
 class WireguardTransformer extends TransformerAbstract
 {
-    use Asset;
     /**
      * List of resources to automatically include
      *

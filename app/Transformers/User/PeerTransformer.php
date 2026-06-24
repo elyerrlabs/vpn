@@ -2,7 +2,6 @@
 
 namespace Vpn\App\Transformers\User;
 
-use Elyerr\ApiResponse\Assets\Asset;
 use Vpn\App\Models\Peer;
 use League\Fractal\TransformerAbstract;
 
@@ -26,7 +25,6 @@ use League\Fractal\TransformerAbstract;
 
 class PeerTransformer extends TransformerAbstract
 {
-    use Asset;
     /**
      * List of resources to automatically include
      *

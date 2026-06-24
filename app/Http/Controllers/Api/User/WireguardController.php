@@ -2,8 +2,7 @@
 
 namespace Vpn\App\Http\Controllers\Api\User;
 
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+use Illuminate\Http\Request; 
 use Vpn\App\Services\WireguardService;
 use App\Http\Controllers\ApiController;
 use Vpn\App\Transformers\User\WireguardTransformer;

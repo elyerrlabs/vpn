@@ -9,8 +9,8 @@
       "Vpn\\Database\\Factories\\": "database/factories/",
       "Vpn\\Database\\Seeders\\": "database/seeders/",
       "Vpn\\Tests\\": "tests/",
-      "GPBMetadata\\": "GPBMetadata/",
-      "Proto\\": "Proto/"
+      "Vpn\\GPBMetadata\\": "GPBMetadata/",
+      "VPN\\Proto\\": "Proto/"
     },
     "files": [
       "app/Helpers/helper.php"
@@ -19,18 +19,15 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Vpn\\App\\Providers\\ServiceProvider"
+        "Vpn\\App\\Providers\\ElyscopeServiceProvider",
+        "Vpn\\App\\Providers\\ModuleServiceProvider",
+        "Vpn\\App\\Providers\\RouteServiceProvider"
       ]
     }
   },
   "require": {
     "grpc/grpc": "^1.74",
-    "google/protobuf": "^4.33",
-    "elyerr/api-response": "v1.0.28"
-  },
-  "require-dev": {
-    "elyerr/laravel-runtime": "^1.0",
-    "laravel/framework": "^12.44"
+    "google/protobuf": "^4.33"
   },
   "scripts": {
     "post-install-cmd": [
@@ -40,10 +37,5 @@
       "@php scripts/bootstrap_keys.php"
     ]
   },
-  "minimum-stability": "stable",
-  "config": {
-    "allow-plugins": {
-      "php-http/discovery": true
-    }
-  }
+  "minimum-stability": "stable"
 }

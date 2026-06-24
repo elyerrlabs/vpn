@@ -2,7 +2,7 @@
 
 namespace Vpn\App\Wrapper;
 
-use Grpc\ChannelCredentials;
+use Vpn\Vendor\Grpc\ChannelCredentials;
 use Elyerr\ApiResponse\Exceptions\ReportError;
 use Vpn\App\Services\KeysGenerator;
 

@@ -3,7 +3,6 @@
 namespace Vpn\App\Http\Controllers\Api\Admin;
 
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Vpn\App\Services\WireguardService;
 use Vpn\App\Transformers\Admin\WireguardTransformer;
 
