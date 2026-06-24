@@ -2,7 +2,39 @@
 
 All notable changes to this project will be documented in this file.
 
-# Changelog
+---
+
+## Unrelease
+
+### Added
+
+- Full compatibility with Elymod App v1.0.2 modular architecture.
+- Support for shared host runtime and ecosystem services.
+- Native integration with the new Elymod Plug & Play module system.
+
+### Changed
+
+- Migrated the VPN module to the Elymod App v1.0.2 module schema.
+- Updated module structure to follow the new modularization standards.
+- Modules now rely on services provided by the host application instead of bundling framework-level dependencies.
+- Improved interoperability with other Elymod ecosystem modules.
+
+### Removed
+
+- Direct dependency on `laravel/framework`.
+- Direct dependency on `elyerr/laravel-runtime`.
+- Direct dependency on `elyerr/api-response`.
+- Redundant framework packages previously duplicated across modules.
+
+### Benefits
+
+- Reduced installation size and dependency duplication.
+- Faster dependency resolution and module installation.
+- Cleaner module boundaries and separation of concerns.
+- Improved maintainability across the Elymod ecosystem.
+- True shared-runtime architecture where common services are provided by the host application.
+
+---
 
 # [v2.0.0]
 
