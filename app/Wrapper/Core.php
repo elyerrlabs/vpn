@@ -2,7 +2,7 @@
 
 namespace Vpn\App\Wrapper;
 
-use Elyerr\ApiResponse\Exceptions\ReportError;
+use RuntimeException;
 
 /*
  * VPN - Server-side software for centralized administration and node management of a VPN service.
@@ -24,6 +24,12 @@ use Elyerr\ApiResponse\Exceptions\ReportError;
 
 class Core extends \Vpn\App\Wrapper\System
 {
+
+    /**
+     * Construct
+     * @param string $endpoint
+     * @param int $port
+     */
     public function __construct(string $endpoint, int $port = 50051)
     {
         parent::__construct(
@@ -35,8 +41,8 @@ class Core extends \Vpn\App\Wrapper\System
 
     /**
      * Verify if it the port is available
-     * @param int $port
      * @param string $host
+     * @param int $port
      * @return bool
      */
     protected function isWireguardPortReachable(string $host, int $port): bool
@@ -91,7 +97,8 @@ class Core extends \Vpn\App\Wrapper\System
      * @param mixed $private_key
      * @param mixed $physical_interface
      * @param mixed $listen_port
-     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
+     * @param mixed $mtu
+     * @throws RuntimeException
      */
     public function mountInterface(
         $interface_name,
@@ -118,9 +125,7 @@ class Core extends \Vpn\App\Wrapper\System
             $this->getMetadata()
         )->wait();
 
-        if ($status->code != self::OK) {
-            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
-        }
+        $this->assertGrpcStatus($status, 'mount');
 
         return $response->getMessage();
     }
@@ -128,7 +133,7 @@ class Core extends \Vpn\App\Wrapper\System
     /**
      * Remove the Wireguard Network Interface
      * @param mixed $interface_name
-     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
+     * @throws RuntimeException
      */
     public function removeInterface($interface_name)
     {
@@ -140,9 +145,7 @@ class Core extends \Vpn\App\Wrapper\System
             $this->getMetadata()
         )->wait();
 
-        if ($status->code != self::OK) {
-            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
-        }
+        $this->assertGrpcStatus($status, 'umount');
 
         return $response->getMessage();
     }
@@ -150,7 +153,7 @@ class Core extends \Vpn\App\Wrapper\System
     /**
      * Shutdown the Wireguard Network Interface
      * @param mixed $interface_name
-     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
+     * @throws RuntimeException
      */
     public function shutdownInterface($interface_name)
     {
@@ -162,9 +165,7 @@ class Core extends \Vpn\App\Wrapper\System
             $this->getMetadata()
         )->wait();
 
-        if ($status->code != self::OK) {
-            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
-        }
+        $this->assertGrpcStatus($status, 'down');
 
         return $response->getMessage();
     }
@@ -172,7 +173,7 @@ class Core extends \Vpn\App\Wrapper\System
     /**
      * Start the wireguard network interface
      * @param mixed $interface_name
-     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
+     * @throws RuntimeException
      */
     public function startInterface($interface_name)
     {
@@ -184,34 +185,32 @@ class Core extends \Vpn\App\Wrapper\System
             $this->getMetadata()
         )->wait();
 
-        if ($status->code != self::OK) {
-            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
-        }
+        $this->assertGrpcStatus($status, 'up');
 
         return $response->getMessage();
     }
 
     /**
      * Add new peer in the Wireguard Network Interface
-     * @param mixed $userId
-     * @param mixed $device_name
-     * @param mixed $interface_name
-     * @param mixed $public_key
-     * @param mixed $allowed_ips
-     * @param mixed $endpoint
-     * @param mixed $preshared_key
-     * @param mixed $persistent_keepalive
-     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
+     * @param string $userId
+     * @param string $device_name
+     * @param string $interface_name
+     * @param string $public_key
+     * @param string $allowed_ips
+     * @param string $endpoint
+     * @param string $preshared_key
+     * @param string $persistent_keepalive
+     * @throws RuntimeException
      */
     public function addPeer(
-        $userId,
-        $device_name,
-        $interface_name,
-        $public_key,
-        $allowed_ips,
-        $endpoint,
-        $preshared_key,
-        $persistent_keepalive
+        string $userId,
+        string $device_name,
+        string $interface_name,
+        string $public_key,
+        string $allowed_ips,
+        string $endpoint,
+        string $preshared_key,
+        string $persistent_keepalive
     ) {
 
         $request = new \Proto\Wireguard\AddPeerRequest();
@@ -229,9 +228,7 @@ class Core extends \Vpn\App\Wrapper\System
             $this->getMetadata()
         )->wait();
 
-        if ($status->code != self::OK) {
-            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
-        }
+        $this->assertGrpcStatus($status, 'addPeer');
 
         return $response->getMessage();
     }
@@ -240,7 +237,7 @@ class Core extends \Vpn\App\Wrapper\System
      * Delete peer
      * @param mixed $interface_name
      * @param mixed $public_key
-     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
+     * @throws RuntimeException
      */
     public function deletePeer($interface_name, $public_key)
     {
@@ -253,16 +250,15 @@ class Core extends \Vpn\App\Wrapper\System
             $this->getMetadata()
         )->wait();
 
-        if ($status->code != self::OK) {
-            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
-        }
+        $this->assertGrpcStatus($status, 'deletePeer');
 
         return $response->getMessage();
     }
 
     /**
      * Get the all interface available on the server
-     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
+     * @throws RuntimeException
+     * @return array{interface: mixed[]}
      */
     public function networkInterfaces()
     {
@@ -271,9 +267,7 @@ class Core extends \Vpn\App\Wrapper\System
             $this->getMetadata()
         )->wait();
 
-        if ($status->code != self::OK) {
-            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
-        }
+        $this->assertGrpcStatus($status, 'interfaces');
 
         $interfaces = [];
         foreach ($response->getData() as $interface) {
@@ -288,7 +282,7 @@ class Core extends \Vpn\App\Wrapper\System
     /**
      * Force to reload the wireguard network interface using the config file
      * @param mixed $interface_name
-     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
+     * @throws RuntimeException
      */
     public function reloadNetwork($interface_name)
     {
@@ -300,9 +294,7 @@ class Core extends \Vpn\App\Wrapper\System
             $this->getMetadata()
         )->wait();
 
-        if ($status->code != self::OK) {
-            throw new ReportError(__('gRPC error: :details', ['details' => $status->details]), $status->code);
-        }
+        $this->assertGrpcStatus($status, 'restart');
 
         return $response->getMessage();
     }

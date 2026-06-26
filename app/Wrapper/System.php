@@ -2,8 +2,12 @@
 
 namespace Vpn\App\Wrapper;
 
-use Vpn\Vendor\Grpc\ChannelCredentials;
 use Elyerr\ApiResponse\Exceptions\ReportError;
+use Grpc\ChannelCredentials;
+use Google\Protobuf\Internal\GPBDecodeException;
+use RuntimeException;
+use Throwable;
+use Vpn\App\Exceptions\GrpcException;
 use Vpn\App\Services\KeysGenerator;
 
 /*
@@ -129,28 +133,54 @@ class System
     /**
      * Check the port is valid
      * @param int $port
-     * @throws ReportError
+     * @throws RuntimeException
      * @return void
      */
     protected function validateListenPort(int $port): void
     {
         if ($port < 1024 || $port > 65535) {
-            throw new ReportError(
+            throw new RuntimeException(
                 __('The selected port is not valid. Please choose a port between 1024 and 65535.'),
                 403
             );
         }
     }
 
+    /**
+     * Throw a rich exception when a gRPC call does not finish successfully.
+     * @param object $status
+     * @param string $method
+     * @return void
+     */
+    protected function assertGrpcStatus(object $status, string $method): void
+    {
+        if ((int) $status->code === self::OK) {
+            return;
+        }
+
+        throw new GrpcException(
+            (int) $status->code,
+            (string) ($status->details ?? ''),
+            $method
+        );
+    }
+
 
     /**
      * Transform data and grpc code to http
-     * @param int $code
+     * @param Throwable $e
      * @return array{message: string, status: int}
      */
-    public static function grpcToHttp(int|string $code): array
+    public static function grpcToHttp(Throwable $e): array
     {
-        $code = (int) $code;
+        $code = (int) $e->getCode();
+
+        if ($e instanceof GPBDecodeException) {
+            return [
+                'status' => 422,
+                'message' => $e->getMessage(),
+            ];
+        }
 
         return match ($code) {
             self::OK => [
@@ -169,7 +199,7 @@ class System
             ],
 
             self::DEADLINE_EXCEEDED => [
-                'status' => 504,
+                'status' => 422,
                 'message' => 'The server took too long to respond. Please try again.',
             ],
 
@@ -214,32 +244,32 @@ class System
             ],
 
             self::UNIMPLEMENTED => [
-                'status' => 501,
+                'status' => 422,
                 'message' => 'This feature is not available yet.',
             ],
 
             self::INTERNAL => [
-                'status' => 500,
+                'status' => 422,
                 'message' => 'Something went wrong on our side. Please try again later.',
             ],
 
             self::UNAVAILABLE => [
-                'status' => 503,
+                'status' => 422,
                 'message' => 'The service is temporarily unavailable. Please try again in a few moments.',
             ],
 
             self::DATA_LOSS => [
-                'status' => 500,
+                'status' => 422,
                 'message' => 'A serious system error occurred. Please contact support.',
             ],
 
             self::UNKNOWN => [
-                'status' => 500,
+                'status' => 422,
                 'message' => 'An unexpected error occurred. Please try again.',
             ],
 
             default => [
-                'status' => 500,
+                'status' => 422,
                 'message' => 'Unexpected system error.',
             ],
         };
