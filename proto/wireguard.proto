@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package proto.wireguard;
+package  proto.wireguard;
 
 message MountRequest {
   string interface_name = 1;
@@ -43,7 +43,7 @@ service WireguardService {
   rpc umount(InterfaceRequest) returns (MessageResponse);
   rpc down(InterfaceRequest) returns (MessageResponse);
   rpc up(InterfaceRequest) returns (MessageResponse);
-  rpc restart(InterfaceRequest) returns (MessageResponse); 
+  rpc restart(InterfaceRequest) returns (MessageResponse);
   rpc addPeer(AddPeerRequest) returns (MessageResponse);
   rpc deletePeer(DeletePeerRequest) returns (MessageResponse);
   rpc interfaces(EmptyRequest) returns (ListInterfacesResponse);

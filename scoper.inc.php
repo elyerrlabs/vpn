@@ -107,6 +107,9 @@ return [
         // '~^$~',                        // The root namespace only
         // '',   
         '~^Composer$~',
+        'Grpc',
+        'Google\Protobuf',
+        'GPBMetadata\Google'
     ],
     'exclude-classes' => [
         // 'ReflectionClassConstant',

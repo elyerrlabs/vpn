@@ -9,8 +9,8 @@
       "Vpn\\Database\\Factories\\": "database/factories/",
       "Vpn\\Database\\Seeders\\": "database/seeders/",
       "Vpn\\Tests\\": "tests/",
-      "Vpn\\GPBMetadata\\": "GPBMetadata/",
-      "VPN\\Proto\\": "Proto/"
+      "GPBMetadata\\": "GPBMetadata/",
+      "Proto\\": "Proto/"
     },
     "files": [
       "app/Helpers/helper.php"
