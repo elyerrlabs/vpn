@@ -776,9 +776,8 @@ const listWireguardServer = async () => {
         per_page: 50,
       },
     });
-    if (res.status == 200) {
-      servers.value = res.data.data;
-    }
+
+    servers.value = res.data.data;
   } catch (error) {
     console.error("Error loading servers:", error);
   }

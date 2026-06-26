@@ -375,9 +375,8 @@ const getServers = async () => {
     const res = await $server.get(page.props.api.servers, {
       params: search_server.value,
     });
-    if (res.status == 200) {
-      servers.value = res.data.data;
-    }
+
+    servers.value = res.data.data;
   } catch (error) {
     if (error?.response?.data?.message) {
       $notify.error(error.response.data.message);

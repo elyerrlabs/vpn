@@ -165,9 +165,8 @@ const pages = ref({
 });
 
 const search = ref({
-  per_page: 15,
+  per_page: 50,
   page: 1,
-  name: "",
 });
 
 const peers = ref([]);
@@ -178,13 +177,13 @@ onMounted(async () => {
 
 const getPeers = async () => {
   try {
-    const res = await $server.get(page.props.api.peers);
+    const res = await $server.get(page.props.api.peers, {
+      params: search.value,
+    });
 
-    if (res.status == 200) {
-      const values = res.data;
-      peers.value = values.data;
-      pages.value = values.meta.pagination;
-    }
+    const values = res.data;
+    peers.value = values.data;
+    pages.value = values.meta.pagination;
   } catch (error) {
     if (error?.response?.data?.message) {
       $notify.error(error.response.data.message);
