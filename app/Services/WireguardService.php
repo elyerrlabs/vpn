@@ -6,7 +6,6 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Vpn\App\Models\Wireguard;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\QueryException;
 use Vpn\App\Repositories\PeerRepository;
 use Vpn\App\Repositories\WireguardRepository;
 use Elyerr\ApiResponse\Exceptions\ReportError;
@@ -31,15 +30,14 @@ use Elyerr\ApiResponse\Exceptions\ReportError;
 
 final class WireguardService extends MasterService
 {
-    /**
-     * Wireguard repository
-     * @var WireguardRepository
-     */
-    protected $repository;
 
-    public function __construct()
+    /**
+     * Construct
+     * @param WireguardRepository $wireguardRepository
+     */
+    public function __construct(protected WireguardRepository $wireguardRepository)
     {
-        $this->repository = app(WireguardRepository::class);
+        parent::__construct();
     }
 
     /**
@@ -49,7 +47,7 @@ final class WireguardService extends MasterService
      */
     public function listWireguardServersForUser(Request $request)
     {
-        $query = $this->repository->query();
+        $query = $this->wireguardRepository->query();
 
         $query->whereHas(
             'server',
@@ -92,7 +90,7 @@ final class WireguardService extends MasterService
      */
     public function search(Request $request)
     {
-        $query = $this->repository->query()
+        $query = $this->wireguardRepository->query()
             ->whereHas(
                 'server',
                 function ($query) use ($request) {
@@ -153,7 +151,7 @@ final class WireguardService extends MasterService
      */
     public function searchForUser(Request $request)
     {
-        $query = $this->repository->query()
+        $query = $this->wireguardRepository->query()
 
             ->whereHas(
                 'server.user',
@@ -199,7 +197,7 @@ final class WireguardService extends MasterService
      */
     public function details(string $id, bool $forUser = false)
     {
-        return $this->repository->query()->where('id', $id)
+        return $this->wireguardRepository->query()->where('id', $id)
             ->when($forUser, fn($q) =>
                 $q->whereHas(
                     'server',
@@ -236,7 +234,7 @@ final class WireguardService extends MasterService
         );
 
         // Filter by slug and server
-        $exists = $this->repository->findBySlug(
+        $exists = $this->wireguardRepository->findBySlug(
             Str::slug($data['name']),
             $data['server_id']
         );
@@ -249,45 +247,38 @@ final class WireguardService extends MasterService
 
         $model = DB::transaction(function () use ($data, $subnet, $gateway) {
 
-            try {
+            $model = $this->wireguardRepository->create([
+                'name' => $data['name'],
+                'slug' => Str::slug($data['name']),
+                'subnet' => $subnet,
+                'gateway' => $gateway,
+                'private_key' => $this->generatePrivKey(),
+                'listen_port' => $data['listen_port'],
+                'mtu' => $data['mtu'] ?? 1420,
+                'dns' => $data['dns'] ?? null,
+                'dns_enabled' => $data['dns_enabled'] ?? false,
+                'network_interface' => $data['network_interface'],
+                'mounted' => $data['mounted'] ?? false,
+                'public' => $data['public'] ?? false,
+                'server_id' => $data['server_id']
+            ]);
 
-                $model = $this->repository->create([
-                    'name' => $data['name'],
-                    'slug' => Str::slug($data['name']),
-                    'subnet' => $subnet,
-                    'gateway' => $gateway,
-                    'private_key' => $this->generatePrivKey(),
-                    'listen_port' => $data['listen_port'],
-                    'mtu' => $data['mtu'] ?? 1420,
-                    'dns' => $data['dns'] ?? null,
-                    'dns_enabled' => $data['dns_enabled'] ?? false,
-                    'network_interface' => $data['network_interface'],
-                    'mounted' => $data['mounted'] ?? false,
-                    'public' => $data['public'] ?? false,
-                    'server_id' => $data['server_id']
-                ]);
+            $this->grpc(function () use ($model) {
 
+                // Unique Interface Name 
+                $this->core($model)->mountInterface(
+                    $model->slug,
+                    $model->subnet,
+                    $model->gateway,
+                    $model->private_key,
+                    $model->network_interface,
+                    $model->listen_port,
+                    $model->mtu
+                );
+            });
 
-                $this->grpc(function () use ($model) {
+            return $model;
 
-                    // Unique Interface Name
-                    $InterfaceName = $model->slug;
-
-                    $this->core($model)->mountInterface(
-                        $InterfaceName,
-                        $model->subnet,
-                        $model->gateway,
-                        $model->private_key,
-                        $model->network_interface,
-                        $model->listen_port,
-                        $model->mtu
-                    );
-                });
-
-                return $model;
-            } catch (QueryException $th) {
-                throw new ReportError(__('The selected port is already in use on this server'), 403);
-            }
         });
 
         return $model;
@@ -301,7 +292,7 @@ final class WireguardService extends MasterService
      */
     public function listSubnetForServer(string $server_id, bool $forUser = false)
     {
-        $nets = $this->repository->query();
+        $nets = $this->wireguardRepository->query();
 
         // Search the all subnets for this server
         $nets->whereHas(
@@ -321,11 +312,11 @@ final class WireguardService extends MasterService
      * @param string $id
      * @param array $data
      * @param bool $forUser
-     * @return TValue|Wireguard|null
+     * @return Wireguard
      */
     public function update(string $id, array $data, bool $forUser = false)
     {
-        $model = $this->repository->query()->where('id', $id)
+        $model = $this->wireguardRepository->query()->where('id', $id)
             ->when(
                 $forUser,
                 fn($q) =>
@@ -358,11 +349,11 @@ final class WireguardService extends MasterService
      * @param string $id
      * @param bool $forUser
      * @throws ReportError
-     * @return TValue|Wireguard|null
+     * @return Wireguard
      */
     public function delete(string $id, bool $forUser = false)
     {
-        $model = $this->repository->query()->where('id', $id)
+        $model = $this->wireguardRepository->query()->where('id', $id)
             ->when(
                 $forUser,
                 fn($q) => $q->whereHas(
@@ -408,7 +399,7 @@ final class WireguardService extends MasterService
      */
     public function shutdown(string $id, bool $forUser = false)
     {
-        $model = $this->repository->query()->where('id', $id)
+        $model = $this->wireguardRepository->query()->where('id', $id)
             ->when($forUser, fn($q) => $q->whereHas(
                 'server',
                 fn($sub) => $sub->where('user_id', request()->user()->id)
@@ -430,7 +421,7 @@ final class WireguardService extends MasterService
                     ->where('wireguard_id', $model->id)
                     ->update(['mounted' => false, 'stand_by' => true]);
 
-                $this->repository->update($model->id, ['mounted' => false]);
+                $this->wireguardRepository->update($model->id, ['mounted' => false]);
             });
         }
     }
@@ -443,7 +434,7 @@ final class WireguardService extends MasterService
      */
     public function start(string $id, bool $forUser = false)
     {
-        $model = $this->repository->query()->where('id', $id)
+        $model = $this->wireguardRepository->query()->where('id', $id)
             ->when(
                 $forUser,
                 fn($q) =>
@@ -470,7 +461,7 @@ final class WireguardService extends MasterService
                     ->where('wireguard_id', $model->id)
                     ->update(['mounted' => true, 'stand_by' => false]);
 
-                $this->repository->update($model->id, ['mounted' => true]);
+                $this->wireguardRepository->update($model->id, ['mounted' => true]);
             });
         }
     }

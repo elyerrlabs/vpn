@@ -75,12 +75,16 @@ class MasterService
         try {
             $fn();
         } catch (\Throwable $th) {
+
             if ($th->getCode() <= 16) {
-                $status = Core::grpcToHttp($th->getCode());
+                $status = Core::grpcToHttp($th);
                 throw new ReportError(__($status['message']), $status['status']);
             }
 
-            throw new ReportError(__($th->getMessage()), $th->getCode());
+            $code = $th->getCode();
+            $httpCode = $code >= 400 && $code <= 599 ? $code : 500;
+
+            throw new ReportError(__($th->getMessage()), $httpCode);
         }
     }
 
@@ -225,7 +229,7 @@ class MasterService
 
         throw_if(
             $wireguard->count() >= $userLimit,
-            new ReportError(
+            fn() => new ReportError(
                 __('You have exceeded the server limit. To add more servers, please upgrade to a higher plan.'),
                 403
             )
@@ -246,7 +250,7 @@ class MasterService
 
         throw_if(
             $servers->count() >= $userLimit,
-            new ReportError(
+            fn() => new ReportError(
                 __('You have exceeded the device limit. To add more devices, please upgrade to a higher plan.'),
                 403
             )

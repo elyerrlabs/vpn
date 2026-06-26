@@ -29,15 +29,10 @@ use Elyerr\ApiResponse\Exceptions\ReportError;
 
 final class PeerService extends MasterService implements Service
 {
-    /**
-     * Peer repository
-     * @var PeerRepository
-     */
-    protected $repository;
 
-    public function __construct()
+    public function __construct(protected PeerRepository $peerRepository)
     {
-        $this->repository = app(PeerRepository::class);
+        parent::__construct();
     }
 
     /**
@@ -47,7 +42,7 @@ final class PeerService extends MasterService implements Service
      */
     public function search(Request $request)
     {
-        return $this->repository->query()
+        return $this->peerRepository->query()
             ->when(
                 $request->filled('name'),
                 fn($q) =>
@@ -106,7 +101,7 @@ final class PeerService extends MasterService implements Service
      */
     public function details(string $id)
     {
-        return $this->repository->find($id);
+        return $this->peerRepository->find($id);
     }
 
     /**
@@ -151,7 +146,7 @@ final class PeerService extends MasterService implements Service
             $ip_allowed = $this->generateRandomIp($wireguard_server->subnet);
 
             //Create new peer
-            $model = $this->repository->create([
+            $model = $this->peerRepository->create([
                 'name' => $data['name'],
                 'public_key' => $keys['public_key'],
                 'preshared_key' => $preshared_key,
@@ -163,16 +158,18 @@ final class PeerService extends MasterService implements Service
             ]);
 
             // Mount peer
-            $this->core($model->wireguard)->addPeer(
-                $user->id,
-                $model->name,
-                $model->wireguard->slug,
-                $model->public_key,
-                $model->allowed_ips,
-                $model->wireguard->getServer(),
-                $model->preshared_key,
-                $model->persistent_keepalive
-            );
+            $this->grpc(function () use ($model, $user) {
+                return $this->core($model->wireguard)->addPeer(
+                    $user->id,
+                    $model->name,
+                    $model->wireguard->slug,
+                    $model->public_key,
+                    $model->allowed_ips,
+                    $model->wireguard->getServer(),
+                    $model->preshared_key,
+                    $model->persistent_keepalive
+                );
+            });
 
             /**
              * Create peer configuration
@@ -216,7 +213,7 @@ final class PeerService extends MasterService implements Service
      */
     public function update(string $id, array $data)
     {
-        $model = $this->repository->query()
+        $model = $this->peerRepository->query()
             ->where('user_id', request()->user()->id)
             ->where('id', $id)
             ->first();
@@ -239,7 +236,7 @@ final class PeerService extends MasterService implements Service
      */
     public function delete(string $id)
     {
-        $model = $this->repository->find($id);
+        $model = $this->peerRepository->find($id);
 
         DB::transaction(function () use ($model) {
 
@@ -247,10 +244,12 @@ final class PeerService extends MasterService implements Service
                 throw new ReportError(__("The peer can not be found"), 404);
             }
 
-            $this->core($model->wireguard)->deletePeer(
-                $model->wireguard->slug,
-                $model->public_key
-            );
+            $this->grpc(function () use ($model) {
+                return $this->core($model->wireguard)->deletePeer(
+                    $model->wireguard->slug,
+                    $model->public_key
+                );
+            });
 
             $model->delete();
         });
@@ -277,7 +276,7 @@ final class PeerService extends MasterService implements Service
 
     public function start(string $id)
     {
-        $model = $this->repository->find($id);
+        $model = $this->peerRepository->find($id);
 
         $this->core($model->wireguard);
 

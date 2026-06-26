@@ -30,15 +30,12 @@ final class ServerService extends MasterService implements Service
 {
 
     /**
-     * Repository
-     * @var ServerRepository
+     * Construct
+     * @param ServerRepository $serverRepository
      */
-    protected $repository;
-
-
-    public function __construct()
+    public function __construct(protected ServerRepository $serverRepository)
     {
-        $this->repository = app(ServerRepository::class);
+        parent::__construct();
     }
 
     /**
@@ -48,7 +45,7 @@ final class ServerService extends MasterService implements Service
      */
     public function search(Request $request)
     {
-        $query = $this->repository->query();
+        $query = $this->serverRepository->query();
 
         $query->when(
             $request->filled('hidden'),
@@ -77,7 +74,7 @@ final class ServerService extends MasterService implements Service
      */
     public function listServerForUsers(Request $request)
     {
-        $query = $this->repository->query();
+        $query = $this->serverRepository->query();
 
         $query->where('hidden', false);
 
@@ -102,7 +99,7 @@ final class ServerService extends MasterService implements Service
      */
     public function searchForUser(Request $request)
     {
-        $query = $this->repository->query();
+        $query = $this->serverRepository->query();
 
         $query->where('user_id', $request->user()->id);
         $query->where('internal', false);
@@ -127,7 +124,7 @@ final class ServerService extends MasterService implements Service
      */
     public function create(array $data)
     {
-        return $this->repository->create($data);
+        return $this->serverRepository->create($data);
     }
 
     /**
@@ -166,7 +163,7 @@ final class ServerService extends MasterService implements Service
      */
     public function update(string $id, array $data)
     {
-        $model = $this->repository->find($id);
+        $model = $this->serverRepository->find($id);
 
         if (empty($model)) {
             throw new ReportError(__('Server can not be found'), 404);
@@ -211,7 +208,7 @@ final class ServerService extends MasterService implements Service
      */
     public function updateForUser(string $id, array $data)
     {
-        $model = $this->repository->query()
+        $model = $this->serverRepository->query()
             ->where('user_id', request()->user()->id)
             ->where('id', $id)
             ->first();
@@ -257,7 +254,7 @@ final class ServerService extends MasterService implements Service
      */
     public function details(string $id)
     {
-        return $this->repository->find($id);
+        return $this->serverRepository->find($id);
     }
 
     /**
@@ -266,7 +263,7 @@ final class ServerService extends MasterService implements Service
      */
     public function detailsForUser(string $id)
     {
-        return $this->repository->query()
+        return $this->serverRepository->query()
             ->where('user_id', request()->user()->id)
             ->where('id', $id)
             ->first();
@@ -280,7 +277,7 @@ final class ServerService extends MasterService implements Service
      */
     public function delete(string $id)
     {
-        $model = $this->repository->find($id);
+        $model = $this->serverRepository->find($id);
 
         if ($model->wireguards()->count()) {
             throw new ReportError(__('This server cannot be deleted because WireGuard interfaces are associated with it.'), 403);
@@ -299,7 +296,7 @@ final class ServerService extends MasterService implements Service
      */
     public function deleteForUser(string $id)
     {
-        $model = $this->repository->query()
+        $model = $this->serverRepository->query()
             ->where('user_id', request()->user()->id)
             ->where('id', $id)
             ->first();
