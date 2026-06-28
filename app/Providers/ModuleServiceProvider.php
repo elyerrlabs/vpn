@@ -53,19 +53,29 @@ class ModuleServiceProvider extends Provider
             $currentConfig = config($key, []);
 
             $filePath = include $file;
-            $moduleConfig['third-party'][$moduleName] = include $file;
+
+            // Check empty files
+            if (count($filePath) == 0) {
+                continue;
+            }
 
             // Merge configs
             switch ($key) {
                 case 'rate_limit':
+                    $moduleConfig = [];
+                    $moduleConfig['third-party'][$moduleName] = include $file;
                     $merged = $this->mergeConfigSmart($moduleConfig, $currentConfig);
                     config()->set($key, $merged);
                     break;
                 case 'routes':
+                    $moduleConfig = [];
+                    $moduleConfig['third-party'][$moduleName] = include $file;
                     $merged = $this->mergeConfigSmart($moduleConfig, $currentConfig);
                     config()->set($key, $merged);
                     break;
                 case 'module':
+                    $moduleConfig = [];
+                    $moduleConfig['third-party'][$moduleName] = include $file;
                     $merged = $this->mergeConfigSmart($moduleConfig, $currentConfig);
                     config()->set($key, $merged);
                     break;
