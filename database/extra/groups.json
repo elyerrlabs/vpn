@@ -54,6 +54,36 @@
     ]
   },
   {
+    "name": "settings",
+    "description": "Dedicated group for managing configuration permissions through services",
+    "services": [
+      {
+        "name": "vpn",
+        "description": "Top level service for admin users for vpn",
+        "actions": [
+          {
+            "name": "full",
+            "public": 0,
+            "active": 1,
+            "api_key": 0
+          },
+          {
+            "name": "view",
+            "public": 0,
+            "active": 1,
+            "api_key": 0
+          },
+          {
+            "name": "update",
+            "public": 0,
+            "active": 1,
+            "api_key": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
     "name": "commerce",
     "description": "Collection of paid services including cloud computing, VPN, and other premium infrastructure solutions.",
     "services": [

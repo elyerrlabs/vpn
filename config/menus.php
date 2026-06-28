@@ -46,7 +46,7 @@ return [
                 'name' => 'VNP Servers',
                 'route' => 'module.vpn.admin.servers.index',
                 'icon' => 'mdi mdi-store-cog',
-                'service' => 'administrator:vpn',
+                'service' => 'administrator:vpn:view',
             ],
         ],
 
@@ -105,10 +105,10 @@ return [
             /*
             'vpn-settings' => [
                 'id'      => 'vpn-settings',
-                'name'    => 'ElyMod Settings',
+                'name'    => 'Vpn Settings',
                 'route'   => 'module.vpn.web.settings',
                 'icon'    => 'mdi-cog',
-                'service' => 'user:settings',
+                'service' => 'settings:vpn:view',
             ],
             */
         ],
@@ -121,10 +121,8 @@ return [
                 'name' => 'VPN Settings',
                 'route' => 'module.vpn.admin.settings.general',
                 'icon' => 'mdi mdi-cog',
-                'service' => 'administrator:settings',
+                'service' => 'settings:vpn:view',
             ],
-
-
         ],
     ],
 
@@ -160,7 +158,7 @@ return [
             'name' => 'Servers',
             'route' => 'module.vpn.admin.servers.index',
             'icon' => 'mdi mdi-store-cog',
-            'service' => 'administrator:vpn',
+            'service' => 'administrator:vpn:view',
             'position' => 1,
         ],
 
@@ -169,7 +167,7 @@ return [
             'name' => 'Wireguard',
             'route' => 'module.vpn.admin.wireguards.index',
             'icon' => 'mdi mdi-store-cog',
-            'service' => 'administrator:vpn',
+            'service' => 'administrator:vpn:view',
             'position' => 2,
         ],
     ],

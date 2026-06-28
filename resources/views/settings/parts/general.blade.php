@@ -1,4 +1,4 @@
-@extends('admin.settings.setting')
+@extends('Vpn::settings.main')
 
 @section('form')
     <div class="space-y-6">
